@@ -1,0 +1,59 @@
+{
+  "seuNumero": "123456", // client
+  "valorNominal": 2.5, // client - default
+  "dataVencimento": "2023-10-20", // client - default
+  "numDiasAgenda": 30,
+  
+  "pagador": {
+  "email": "nome.sobrenome@x.com.br", // client - default
+  "ddd": "31",
+  "telefone": "31 99999-999", // client - default
+  "numero": "3456", // client - default
+  "complemento": "apartamento 3 bloco 4", // client - default
+  "cpfCnpj": "01123456789", // client - default
+  "tipoPessoa": "FISICA", // client - default
+  "nome": "Nome do pagador", // client - default
+  "endereco": "Avenida Brasil, 1200", // client - default
+  "bairro": "Centro", // client - default
+  "cidade": "Belo Horizonte", // client - default
+  "uf": "MG", // client - default
+  "cep": "30110000" // client - default
+  },
+  
+  "desconto": {
+  "taxa": 3,
+  "codigo": "PERCENTUALDATAINFORMADA",
+  "quantidadeDias": 7
+  },
+  
+  "multa": {
+  "taxa": 2,
+  "codigo": "PERCENTUAL"
+  },
+  
+  "mora": {
+  "taxa": 5,
+  "codigo": "TAXAMENSAL"
+  },
+  
+  "mensagem": {
+  "linha1": "mensagem 1",
+  "linha2": "mensagem 2",
+  "linha3": "mensagem 3",
+  "linha4": "mensagem 4",
+  "linha5": "mensagem 5"
+  },
+  
+  "beneficiarioFinal": {
+  "cpfCnpj": "12345678901", // config
+  "tipoPessoa": "FISICA", // config
+  "nome": "Nome do beneficiário", // config
+  "endereco": "Avenida Brasil, 1200", // config
+  "bairro": "Centro", // config
+  "cidade": "Belo Horizonte", // config
+  "uf": "MG", // config
+  "cep": "30110000" // config
+  }
+  
+  }
+  

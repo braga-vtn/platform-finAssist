@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  clerkId         String    @unique @default(uuid())
+  avatar          String?
+  name            String?
+  email           String    @unique
+  password        String
+  isEmailVerified Boolean   @default(false)
+  updatedAt       DateTime  @default(now()) @updatedAt
+  createdAt       DateTime  @default(now())
+  Clients         Clients[]
+  Team            Team[]
+}
+
+model Clients {
+  id             Int      @id @default(autoincrement())
+  identifier     String   @unique // Nosso Número de Cliente;
+  name           String // Nome da Empresa;
+  register       String   @unique // Número do CNPJ/CPF;
+  address        String // Endereço Completo;
+  value          Int // Valor das parcelas;
+  email          String
+  phone          String
+  SendByWhatsapp Boolean  @default(true)
+  SendByEmail    Boolean  @default(true)
+  observation    String?
+  memberId       String // clerkId de quem criou o cliente
+  dueAt          DateTime
+  updatedAt      DateTime @default(now()) @updatedAt
+  createdAt      DateTime @default(now())
+  userId         String
+  User           User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  nameCompany String // nome da conta de quem convidou
+  ownerId     String // clerkId de quem convidou
+  updatedAt   DateTime @default(now()) @updatedAt
+  createdAt   DateTime @default(now())
+  memberId    String // clerkId do convidado
+  Member      User     @relation(fields: [memberId], references: [clerkId], onDelete: Cascade)
+}
