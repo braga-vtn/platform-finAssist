@@ -2,32 +2,22 @@
 import { Table } from '@tanstack/react-table';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { Client } from '@/types/client';
+import { Invoice } from '@/types/invoice';
 
-import { DataTableCreateClient } from './data-table-create-client';
 import { DataTableExport } from './data-table-export';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
-import { DataTableDelete } from './data-table-delete';
-
-type Team = {
-  value: string;
-  label: string;
-}
+import { status } from './const';
+import { DataTableCreateInvoice } from './data-table-create-invoice';
 
 interface DataTableToolbarProps<TData> {
-  team: Team[];
   table: Table<TData>;
-  onCreateClient: (_item: Client) => void;
-  onDeleteGroupClient: (_ids: number[]) => void;
+  onCreateInvoice: (_item: Invoice) => void;
 }
 
 export function DataTableToolbar<TData>({
-  team,
   table,
-  onCreateClient,
-  onDeleteGroupClient,
+  onCreateInvoice,
 }: DataTableToolbarProps<TData>): React.JSX.Element {
-
   return (
     <div className="flex items-center justify-between pb-6">
       <div className="flex flex-1 items-center space-x-2">
@@ -42,18 +32,17 @@ export function DataTableToolbar<TData>({
             <Search size={16} strokeWidth={2} aria-hidden="true" />
           </div>
         </div>
-        {table.getColumn('memberId') && (
+        {table.getColumn('status') && (
           <DataTableFacetedFilter
-            column={table.getColumn('memberId')}
-            title="Equipe"
-            options={team}
+            column={table.getColumn('status')}
+            title="Status de pagamento"
+            options={status}
           />
         )}
       </div>
       <div className="flex flex-row items-center gap-2">
-        <DataTableDelete table={table} onDeleteGroupClient={onDeleteGroupClient} />
-        <DataTableExport table={table} filename="clientes" />
-        <DataTableCreateClient team={team} onCreateClient={onCreateClient} />
+        <DataTableExport table={table} filename="boletos" />
+        <DataTableCreateInvoice onCreateInvoice={onCreateInvoice} />
       </div>
     </div>
   );

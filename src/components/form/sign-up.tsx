@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation';
 
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Logo } from '../global/logo';
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+ 
 export const FormSignUp = () => {
   const id = useId();
   const router = useRouter();

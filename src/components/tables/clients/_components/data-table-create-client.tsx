@@ -19,6 +19,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Client } from '@/types/client';
+import { states } from '@/constants/infra';
 
 type Team = {
   value: string;
@@ -27,7 +28,6 @@ type Team = {
 
 interface CreateClient {
   team: Team[];
-  disabled: boolean;
   onCreateClient: (_item: Client) => void;
 }
 
@@ -35,6 +35,10 @@ const formSchema = z.object({
   name: z.string().min(1, { message: "" }),
   register: z.string().min(1, { message: "" }),
   identifier: z.string().min(1, { message: "" }),
+  city: z.string().min(1, { message: "" }),
+  uf: z.enum(states, { message: "" }),
+  zipcode: z.string().min(1, { message: "" }),
+  neighborhood: z.string().min(1, { message: "" }),
   address: z.string().optional(),
   dueAt: z.string(),
   value: z.string(),
@@ -48,7 +52,6 @@ const formSchema = z.object({
 
 export function DataTableCreateClient({
   team,
-  disabled,
   onCreateClient,
 }: CreateClient): React.JSX.Element {
 
@@ -58,6 +61,10 @@ export function DataTableCreateClient({
       name: "",
       register: "",
       identifier: "",
+      city: "",
+      uf: "SP",
+      zipcode: "",
+      neighborhood: "",
       address: "",
       dueAt: new Date().toISOString(),
       value: "0",
@@ -86,7 +93,6 @@ export function DataTableCreateClient({
       <AlertDialogTrigger asChild>
         <Button
           variant="style"
-          disabled={disabled}
           className='h-8'
           onClick={() => form.reset()}
         >

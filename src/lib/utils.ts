@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { clsx, type ClassValue } from 'clsx';
 import { differenceInCalendarDays, endOfDay, formatISO, startOfDay, subDays } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
@@ -15,6 +16,22 @@ export const calculateDateDifference = (from?: Date, to?: Date): number => {
   return differenceInCalendarDays(to, from) + 1;
 };
  
+export function parseDate(value: any): Date {
+  const parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+export const handleCurrencyChange = (value: string) => {
+  const numericValue = value.replace(/\D/g, '');
+  const number = numericValue ? parseInt(numericValue, 10) : 0;
+  const formatted = (number / 100).toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  return formatted;
+};
+
 export function formatRegister(text: string) {
   if (!text) return text;
 

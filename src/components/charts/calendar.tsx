@@ -4,14 +4,12 @@ import { CalendarIcon } from '@radix-ui/react-icons';
 import { endOfDay, format, isAfter, subDays } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { ptBR } from 'date-fns/locale';
-
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarUI } from '@/components/ui/calendar';
 
 interface CalendarDashboardProps extends React.HTMLAttributes<HTMLDivElement> {
-  disabled?: boolean;
   onDateChange: (_range: { from?: Date; to?: Date }) => void;
 }
 
@@ -35,7 +33,7 @@ const predefinedRanges = [
   { label: 'Últimos 12 meses', range: { from: subDays(new Date(), 364), to: new Date() } }
 ];
 
-export function ChartCalendar({ className, disabled, onDateChange }: CalendarDashboardProps): React.JSX.Element {
+export function ChartCalendar({ className, onDateChange }: CalendarDashboardProps): React.JSX.Element {
   const [date, setDate] = React.useState<DateRange | undefined>(getDefaultDateRange());
   const today = React.useMemo(() => new Date(), []);
   const [visibleMonth, setVisibleMonth] = React.useState<Date>(date?.from || today);
@@ -61,7 +59,6 @@ export function ChartCalendar({ className, disabled, onDateChange }: CalendarDas
       <PopoverTrigger asChild>
         <Button
           id="date"
-          disabled={disabled}
           variant="style"
           className={cn('w-auto justify-start text-left font-normal h-10 shadow-md select-none rounded-xl cursor-pointer bg-neutral-100 dark:bg-neutral-800 border dark:border-neutral-700', !date && 'text-muted-foreground')}
         >

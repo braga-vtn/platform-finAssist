@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Sidebar, SidebarAccount, SidebarBody, SidebarLink } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { ItemSidebar, accountsSidebar } from '@/constants/infra';
+import { ItemSidebar } from '@/constants/infra';
 import { ToogleTheme } from '@/components/global/toogle-theme';
 import { Container } from '@/components/global/container';
 import { usePathname } from 'next/navigation';
+import { accountsSidebar } from '@/constants/faker';
 
 type Props = { children: React.ReactNode };
 
@@ -38,7 +39,7 @@ const Layout = ({ children }: Props): JSX.Element => {
         'h-screen'
       )}
     >
-      <Sidebar open={open} setOpen={setOpen}>
+      <Sidebar open={open} setOpen={setOpen}>  
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {open ? <Logo /> : <LogoIcon />}

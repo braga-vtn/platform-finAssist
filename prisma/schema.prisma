@@ -8,17 +8,18 @@ datasource db {
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  clerkId         String    @unique @default(uuid())
+  id              Int        @id @default(autoincrement())
+  clerkId         String     @unique @default(uuid())
   avatar          String?
   name            String?
-  email           String    @unique
+  email           String     @unique
   password        String
-  isEmailVerified Boolean   @default(false)
-  updatedAt       DateTime  @default(now()) @updatedAt
-  createdAt       DateTime  @default(now())
+  isEmailVerified Boolean    @default(false)
+  updatedAt       DateTime   @default(now()) @updatedAt
+  createdAt       DateTime   @default(now())
   Clients         Clients[]
   Team            Team[]
+  Invoices        Invoices[]
 }
 
 model Clients {
@@ -26,7 +27,11 @@ model Clients {
   identifier     String   @unique // Nosso Número de Cliente;
   name           String // Nome da Empresa;
   register       String   @unique // Número do CNPJ/CPF;
-  address        String // Endereço Completo;
+  city           String
+  uf             String
+  zipcode        String
+  neighborhood   String
+  address        String
   value          Int // Valor das parcelas;
   email          String
   phone          String
@@ -51,4 +56,19 @@ model Team {
   createdAt   DateTime @default(now())
   memberId    String // clerkId do convidado
   Member      User     @relation(fields: [memberId], references: [clerkId], onDelete: Cascade)
+}
+
+model Invoices {
+  id         String   @id @default(uuid())
+  externalId String   @unique // inter
+  identifier String
+  status     String //paid, pending or canceled
+  value      Int
+  payload    Json
+  fileUrl    String?
+  dueAt      DateTime
+  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+  userId     String
+  User       User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
 }

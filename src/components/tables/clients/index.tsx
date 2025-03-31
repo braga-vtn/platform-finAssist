@@ -1,15 +1,22 @@
 import { useState } from 'react';
 import { Client } from '@/types/client';
+import { states } from '@/constants/infra';
 
 import { DataTable } from './_components/data-table';
 import DialogClients from './_components/dialog-clients';
 import { createColumns } from './_components/columns';
+
+type UF = (typeof states)[number];
 
 type Item = {
   id: number;
   identifier: string;
   name: string;
   register: string;
+  city: string;
+  uf: UF;
+  zipcode: string;
+  neighborhood: string;
   address?: string | undefined;
   value: string;
   email?: string | undefined;
@@ -28,7 +35,6 @@ type Team = {
 }
 
 type Props = {
-  companyOwner: string;
   items: Item[];
   team: Team[];
   onUpdateClient: (_item: Client) => void;
@@ -37,7 +43,7 @@ type Props = {
   onDeleteGroupClient: (_ids: number[]) => void;
 };
 
-export default function TableClients({ companyOwner, items, team, onUpdateClient, onDeleteClient, onCreateClient, onDeleteGroupClient }: Props) {
+export default function TableClients({ items, team, onUpdateClient, onDeleteClient, onCreateClient, onDeleteGroupClient }: Props) {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -53,7 +59,6 @@ export default function TableClients({ companyOwner, items, team, onUpdateClient
   return (
     <div>
       <DataTable
-        companyOwner={companyOwner}
         data={items}
         team={team}
         columns={columns}

@@ -1,4 +1,4 @@
-import { Settings, LogOut, ChartPieIcon, User2, ReceiptText, Lock } from 'lucide-react';
+import { Settings, LogOut, ChartPieIcon, User2, ReceiptText } from 'lucide-react';
 
 export const ItemSidebar = [
   { 
@@ -35,14 +35,6 @@ export const ItemSidebar = [
   },
   {
     id: 5,
-    label: 'Acesso Avançado',
-    href: '/admin',
-    icon: (
-      <Lock className="h-5 w-5 flex-shrink-0" />
-    ),
-  },
-  {
-    id: 6,
     label: 'Sair',
     href: '#',
     icon: (
@@ -51,17 +43,27 @@ export const ItemSidebar = [
   },
 ];
 
-export const accountsSidebar = [
+export const stepsInvoice = [
   {
-    id: '41b5d2df-bec5-4d86-8c6f-7c2a72aca26f',
-    type: 'me',
-    name: 'Matheus braga',
-    avatar: '/avatar-default.jpeg'
+    step: 1,
+    title: "Selecione o Cliente",
   },
   {
-    id: '84fb8182-9788-4a30-bc7d-43934d6a8a77',
-    type: 'member',
-    name: 'Castro Advogados',
-    avatar: 'https://www.ulogo.com.br/imagens/advogado/advogado_mini/7.webp'
-  }
+    step: 2,
+    title: "Dados da Cobrança",
+  },
+  {
+    step: 3,
+    title: "Juros, Multas e Desconto",
+  },
+  {
+    step: 4,
+    title: "Resumo",
+  },
 ];
+
+export const states = [
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+  "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+  "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+] as const; 

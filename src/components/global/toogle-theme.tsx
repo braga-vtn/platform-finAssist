@@ -3,7 +3,6 @@
 import { Moon, Sun } from 'lucide-react';
 import { JSX } from 'react';
 import { useTheme } from 'next-themes';
-
 import { Toggle } from '@/components/ui/toggle';
 
 function ToogleTheme(): JSX.Element {
@@ -12,7 +11,7 @@ function ToogleTheme(): JSX.Element {
   return (
     <div>
       <Toggle
-        variant="style"
+        variant="outline"
         className="group w-9 h-2 data-[state=on]:bg-transparent data-[state=on]:hover:bg-muted border-none cursor-pointer"
         pressed={resolvedTheme === 'dark'}
         onPressedChange={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}

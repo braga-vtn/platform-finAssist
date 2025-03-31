@@ -1,7 +1,7 @@
 "use client";
 import { useId, useState } from "react";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, isBefore, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   Select,
@@ -20,30 +20,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, handleCurrencyChange, parseDate } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { states } from "@/constants/infra";
 
 type Team = {
   value: string;
   label: string;
-}
-
-const handleCurrencyChange = (value: string) => {
-  const numericValue = value.replace(/\D/g, '');
-  const number = numericValue ? parseInt(numericValue, 10) : 0;
-  const formatted = (number / 100).toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  return formatted;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function parseDate(value: any): Date {
-  const parsed = new Date(value);
-  return isNaN(parsed.getTime()) ? new Date() : parsed;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,12 +61,51 @@ export function ProfileForm({ form, team }: { form: any, team: Team[] }) {
           <Input className="w-full" />
         </FormFildItem>
       </div>
+      <div className="flex flex-row items-center w-full gap-2 px-1">
+        <FormFildItem
+          control={form.control}
+          name="city"
+          label="Cidade"
+        >
+          <Input className="w-full" />
+        </FormFildItem>
+        <FormFildItem
+          control={form.control}
+          name="uf"
+          label="UF"
+        >
+          <Select onValueChange={(value) => form.setValue('uf', value)}>
+            <SelectTrigger className="w-full border dark:border-neutral-700 border-neutral-300 bg-neutral-100 dark:bg-neutral-900 shadow-md">
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent className="h-48">
+              {states.map((item) =>
+                <SelectItem key={`item-${item}`} value={item}>{item}</SelectItem>
+              )}
+            </SelectContent>
+          </Select>
+        </FormFildItem>
+        <FormFildItem
+          control={form.control}
+          name="neighborhood"
+          label="Bairro"
+        >
+          <Input className="w-full" />
+        </FormFildItem>
+        <FormFildItem
+          control={form.control}
+          name="zipcode"
+          label="Cep"
+        >
+          <Input type="number" min={0} max={99999999} className="w-full" />
+        </FormFildItem>
+      </div>
       <div className="flex flex-row items-end w-full gap-2 px-1">
         <div className="w-1/2">
           <FormFildItem
             control={form.control}
             name="address"
-            label="Endereço"
+            label="Complemento"
             isOptional
           >
             <Input className="w-full" />
@@ -114,6 +137,7 @@ export function ProfileForm({ form, team }: { form: any, team: Team[] }) {
                   onSelect={(day) => setDate(day ?? new Date())}
                   locale={ptBR}
                   initialFocus
+                  disabled={(day) => isBefore(day, startOfToday())}
                 />
               </PopoverContent>
             </Popover>

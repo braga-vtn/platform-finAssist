@@ -8,6 +8,7 @@ import { ChartPieLabel } from '@/components/charts/pie-label';
 import { calculateDateDifference, formatDateRange, getDefaultDateRange } from '@/lib/utils';
 import { ReceiptText, Send, SendIcon, Users, Wallet } from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
+import { team } from '@/constants/faker';
 
 import { MemberFilter } from './_components/member-filter';
 
@@ -81,17 +82,6 @@ const barStackedConfig = {
     { date: '2025-03-05', value1: 21, value2: 9 },
   ],
 };
-
-const team = [
-  {
-    id: 'b7b64ce4-f95a-4240-8073-e09513293421',
-    name: 'Matheus Braga'
-  },
-  {
-    id: '5c3632b8-e0dc-4cac-8534-3ae5691858d8',
-    name: 'Bruna Martins'
-  }
-];
 
 export default function Dashboard(): JSX.Element {
   const [itemsSelected, setItemsSelected] = useState<string[]>([]);

@@ -11,7 +11,7 @@ import { Logo } from '../global/logo';
 type Props = {
   onChangeStep: (_value: number) => void;
 }
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+ 
 export const FormSignIn = ({ onChangeStep }: Props) => {
   const id = useId();
   const router = useRouter();

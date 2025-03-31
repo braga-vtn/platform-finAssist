@@ -23,32 +23,21 @@ import {
   TableRow,
   TableRowHeader,
 } from '@/components/ui/table';
-import { Client } from '@/types/client';
+import { Invoice } from '@/types/invoice';
 
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 
-type Team = {
-  value: string;
-  label: string;
-}
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  team: Team[];
-  onSelect?: (_id: number) => void;
-  onCreateClient: (_item: Client) => void;
-  onDeleteGroupClient: (_ids: number[]) => void;
+  onCreateInvoice: (_item: Invoice) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
-  team,
   data,
-  onSelect,
-  onCreateClient,
-  onDeleteGroupClient,
+  onCreateInvoice,
 }: DataTableProps<TData, TValue>): React.JSX.Element {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -74,22 +63,14 @@ export function DataTable<TData, TValue>({
     },
     enableRowSelection: true,
     globalFilterFn: (row, columnId, filterValue) => {
-      const { identifier, name, register, email, phone } = row.original as {
+      const { identifier } = row.original as {
         identifier?: string;
-        name?: string;
-        register?: string;
-        email?: string;
-        phone?: string;
       };
 
       const search = String(filterValue).toLowerCase();
 
       const found =
-        (identifier && identifier.toLowerCase().includes(search)) ||
-        (name && name.toLowerCase().includes(search)) ||
-        (register && register.toLowerCase().includes(search)) ||
-        (email && email.toLowerCase().includes(search)) ||
-        (phone && phone.toLowerCase().includes(search));
+        (identifier && identifier.toLowerCase().includes(search));
 
       return !!found;
     },
@@ -107,7 +88,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} team={team} onCreateClient={onCreateClient} onDeleteGroupClient={onDeleteGroupClient} />
+      <DataTableToolbar table={table} onCreateInvoice={onCreateInvoice} />
       <div className="rounded-md border dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 shadow-md -mt-6">
         <Table>
           <TableHeader>
@@ -137,7 +118,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} onClick={() => onSelect ? onSelect((row.original as { id: number }).id) : null}>
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

@@ -2,8 +2,7 @@
 
 import * as React from 'react';
 import { ThemeProvider as NextThemesProvider, ThemeProviderProps } from 'next-themes';
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+ 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const [isMounted, setIsMounted] = React.useState(false);
 

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Check } from 'lucide-react';
-
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,8 +18,8 @@ import {
 } from '@/components/ui/popover';
 
 type Team = {
-  id: string;
-  name: string;
+  value: string;
+  label: string;
 }
 
 interface Props {
@@ -61,14 +60,14 @@ export function MemberFilter({ team, itemsSelected, onFilter }: Props): React.JS
                   </Badge>
                 ) : (
                   team
-                    .filter((member) => itemsSelected.includes(member.id))
+                    .filter((member) => itemsSelected.includes(member.value))
                     .map((member) => (
                       <Badge
                         variant="secondary"
-                        key={member.id}
+                        key={member.value}
                         className="rounded-sm px-1 font-normal"
                       >
-                        {member.name}
+                        {member.label}
                       </Badge>
                     ))
                 )}
@@ -84,11 +83,11 @@ export function MemberFilter({ team, itemsSelected, onFilter }: Props): React.JS
             <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
             <CommandGroup>
               {team.map((member) => {
-                const isSelected = itemsSelected.includes(member.id);
+                const isSelected = itemsSelected.includes(member.value);
                 return (
                   <CommandItem
-                    key={member.id}
-                    onSelect={() => handleSelectedItem(member.id)}
+                    key={member.value}
+                    onSelect={() => handleSelectedItem(member.value)}
                   >
                     <div
                       className={cn(
@@ -100,7 +99,7 @@ export function MemberFilter({ team, itemsSelected, onFilter }: Props): React.JS
                     >
                       <Check />
                     </div>
-                    <span>{member.name}</span>
+                    <span>{member.label}</span>
                   </CommandItem>
                 );
               })}

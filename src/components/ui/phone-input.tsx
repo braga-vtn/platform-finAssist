@@ -49,12 +49,10 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
 InputComponent.displayName = 'InputComponent';
 
 type CountrySelectProps = {
-  disabled?: boolean;
   value: RPNInput.Country;
 };
 
 const CountrySelect = ({
-  disabled,
   value,
 }: CountrySelectProps) => {
   return (
@@ -62,7 +60,6 @@ const CountrySelect = ({
       type="button"
       variant='ghost'
       className={cn('flex gap-1 rounded-e-none rounded-s-lg pl-3 pr-1 dark:text-neutral-50 text-neutral-950 border dark:border-neutral-700 border-neutral-300 border-r-0 relative z-0 overflow-hidden bg-neutral-100 dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-default shadow-md')}
-      disabled={disabled}
     >
       <FlagComponent country={value} countryName={value} />
     </Button>

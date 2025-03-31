@@ -19,12 +19,17 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { Client } from '@/types/client';
+import { states } from '@/constants/infra';
 
 const formSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1, { message: "" }),
   register: z.string().min(1, { message: "" }),
   identifier: z.string().min(1, { message: "" }),
+  city: z.string().min(1, { message: "" }),
+  uf: z.enum(states, { message: "" }),
+  zipcode: z.string().min(1, { message: "" }),
+  neighborhood: z.string().min(1, { message: "" }),
   address: z.string().optional(),
   dueAt: z.string().min(1, { message: "" }),
   value: z.string().min(1, { message: "" }),
@@ -36,11 +41,17 @@ const formSchema = z.object({
   observation: z.string().optional(),
 });
 
+type UF = (typeof states)[number];
+
 type Item = {
   id: number;
   identifier: string;
   name: string;
   register: string;
+  city: string;
+  uf: UF;
+  zipcode: string;
+  neighborhood: string;
   address?: string | undefined;
   value: string;
   email?: string | undefined;
@@ -77,6 +88,10 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
       name: '',
       register: '',
       identifier: '',
+      city: "",
+      uf: "SP",
+      zipcode: "",
+      neighborhood: "",
       address: '',
       dueAt: '',
       value: '',
@@ -97,6 +112,10 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
         name: item.name,
         register: item.register,
         identifier: item.identifier,
+        city: item.city,
+        uf: item.uf,
+        zipcode: item.zipcode,
+        neighborhood: item.neighborhood,
         address: item.address ?? '',
         dueAt: item.dueAt,
         value: item.value,
