@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import FileUploadDropzone from "@/components/global/uploader-drop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,11 @@ export const ProfileTabs = () => {
     toast('Foto Deletada', {description: 'A sua foto de perfil foi deletada com sucesso!'});
     setAvatarNow("");
     setFileTemp(null);
+  }, []);
+
+  useEffect(() => {
+    setEmail('');
+    setCreatedAt('');
   }, []);
 
   const onSubmit = () => {
