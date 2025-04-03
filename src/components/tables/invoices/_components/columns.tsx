@@ -3,8 +3,7 @@ import type { Row } from '@tanstack/react-table';
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui/badge';
 import { z } from 'zod';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { formatDateClassic } from '@/lib/utils';
 
 import { DataTableColumnHeader } from './data-table-column-header';
 import { status } from './const';
@@ -35,22 +34,6 @@ function formatMoney(value: string) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(valueInReais);
-}
-
-function formatDateClassic(date: string) {
-  if (!date) return date;
-
-  try {
-    const parsedDate = new Date(date);
-
-    if (isNaN(parsedDate.getTime())) {
-      return date;
-    }
-
-    return format(parsedDate, "d 'de' MMMM 'de' yyyy", { locale: ptBR });
-  } catch {
-    return date;
-  }
 }
 
 export const createColumns = (): ColumnDef<Task>[] => [

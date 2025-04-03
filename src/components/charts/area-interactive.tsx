@@ -55,7 +55,7 @@ export function ChartAreaInteractive({ title, data, days, label }: Props): React
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
           <SelectTrigger
-            className="w-[160px] rounded-xl sm:ml-auto bg-neutral-50 dark:bg-neutral-900 mr-3 border dark:border-neutral-700 cursor-pointer"
+            className="w-[160px] sm:ml-auto bg-neutral-50 dark:bg-neutral-900 mr-3 border dark:border-neutral-700 cursor-pointer"
             aria-label="Selecione"
           >
             <SelectValue placeholder="Em 3 meses" />

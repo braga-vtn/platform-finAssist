@@ -35,7 +35,7 @@ const Layout = ({ children }: Props): JSX.Element => {
     <div
       key='sidebar'
       className={cn(
-        'flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 overflow-hidden',
+        'flex select-text flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 overflow-hidden',
         'h-screen'
       )}
     >

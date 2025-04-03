@@ -10,14 +10,12 @@ import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Logo } from '../global/logo';
 
 type Props = {
-  newPassword: string;
-  confirmPassword: string;
-  onNewPasswordChange: (_value: string) => void;
-  onConfirmPasswordChange: (_value: string) => void;
+  emailRecovery: string;
+  onEmailRecoveryChange: (_value: string) => void;
   onChangeStep: (_value: number) => void;
 }
 
-export const FormPasswordRecovery = ({ newPassword, confirmPassword, onNewPasswordChange, onConfirmPasswordChange, onChangeStep }: Props) => {
+export const FormPasswordRecoveryEmail = ({ emailRecovery, onEmailRecoveryChange, onChangeStep }: Props) => {
   const id = useId();
   const router = useRouter();
 
@@ -25,9 +23,9 @@ export const FormPasswordRecovery = ({ newPassword, confirmPassword, onNewPasswo
     router.push(url);
   };
 
-  const handlePasswordRecovery = () => {
-    toast('Senha Alterada', { description: 'Acesse sua conta com a sua nova senha!' });
-    onChangeStep(1);
+  const handlePasswordRecoveryEmail = () => {
+    toast('Código Enviado', {description: 'Insira o código de 6 dígitos que foi enviado para o seu email.'});
+    onChangeStep(3);
   };
 
   return (
@@ -37,25 +35,15 @@ export const FormPasswordRecovery = ({ newPassword, confirmPassword, onNewPasswo
           <Logo withName={true} />
           <CardHeader className="mb-4">
             <CardDescription className="sm:text-center">
-              Digite uma nova senha que seja segura para sua conta.
+              Informe o email da conta em que deseja recuperar.
             </CardDescription>
           </CardHeader>
         </div>
         <form className="space-y-5">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor={`${id}-newPassword`}>Senha</Label>
-              <Input id={`${id}-newPassword`} value={newPassword} onChange={(e) => onNewPasswordChange(e.target.value)} type="newPassword" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`${id}-confirmPassword`}>Nova senha</Label>
-              <Input
-                id={`${id}-confirmPassword`}
-                value={confirmPassword}
-                onChange={(e) => onConfirmPasswordChange(e.target.value)}
-                type="confirmPassword"
-                required
-              />
+              <Label htmlFor={`${id}-email`}>Email</Label>
+              <Input id={`${id}-email`} value={emailRecovery} onChange={(e) => onEmailRecoveryChange(e.target.value)} type="email" required />
             </div>
           </div>
           <div className="flex justify-end gap-2">
@@ -63,8 +51,8 @@ export const FormPasswordRecovery = ({ newPassword, confirmPassword, onNewPasswo
               Ir ao Login
             </a>
           </div>
-          <Button type="button" className="w-full" disabled={!newPassword || !confirmPassword || (newPassword !== confirmPassword)} onClick={handlePasswordRecovery}>
-            Trocar Senha
+          <Button type="button" className="w-full" disabled={!emailRecovery} onClick={handlePasswordRecoveryEmail}>
+            Continuar
           </Button>
         </form>
         <p className="text-center text-sm mt-3">

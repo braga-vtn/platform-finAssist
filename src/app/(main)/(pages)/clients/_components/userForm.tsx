@@ -184,7 +184,7 @@ export function ProfileForm({ form, team }: { form: any, team: Team[] }) {
             label="Whatsapp"
             isOptional
           >
-            <PhoneInput maxLength={15} defaultCountry='BR' defaultValue={form.getValues('phone')} />
+            <PhoneInput maxLength={17} defaultCountry='BR' defaultValue={form.getValues('phone')} />
           </FormFildItem>
         </div>
         <div className="flex flex-row items-center w-2/5 mt-5 gap-2">

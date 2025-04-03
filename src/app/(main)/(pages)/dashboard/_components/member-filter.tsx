@@ -41,7 +41,7 @@ export function MemberFilter({ team, itemsSelected, onFilter }: Props): React.JS
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="style" size="sm" className="h-10 border rounded-xl">
+        <Button variant="style" size="sm">
           {itemsSelected.length > 0 && (
             <>
               <Badge

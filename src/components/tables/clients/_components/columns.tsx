@@ -5,9 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { z } from 'zod';
 import { Check, X } from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { formatRegister } from '@/lib/utils';
+import { formatDateClassic, formatRegister } from '@/lib/utils';
 
 import { DataTableColumnHeader } from './data-table-column-header';
 
@@ -86,22 +84,6 @@ function formatPhone(phone: string) {
   }
   
   return phone;
-}
-
-function formatDateClassic(date: string) {
-  if (!date) return date;
-
-  try {
-    const parsedDate = new Date(date);
-    
-    if (isNaN(parsedDate.getTime())) {
-      return date;
-    }
-    
-    return format(parsedDate, "d 'de' MMMM 'de' yyyy", { locale: ptBR });
-  } catch {
-    return date;
-  }
 }
 
 // Modificar a função columns para receber o team como parâmetro

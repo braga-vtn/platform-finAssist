@@ -5,6 +5,7 @@ import React, { useState, createContext, useContext } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckIcon, ChevronsUpDown, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 import {
   Popover,
@@ -77,7 +78,7 @@ export const Sidebar = ({
   open?: boolean;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   animate?: boolean;
-   
+
 }) => {
   return (
     <SidebarProvider open={open} setOpen={setOpen} animate={animate}>
@@ -181,6 +182,29 @@ export const SidebarLink = ({
   props?: LinkProps;
 }): React.JSX.Element => {
   const { open, animate } = useSidebar();
+  const router = useRouter();
+
+  const onRedirect = () => {
+    router.push('/auth/sign-in');
+  };
+
+  if (!link.href) {
+    return (
+      <span onClick={onRedirect} className='flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer'>
+        <span className='text-neutral-500'>{link.icon}</span>
+        <motion.span
+          animate={{
+            display: animate ? (open ? 'inline-block' : 'none') : 'inline-block',
+            opacity: animate ? (open ? 1 : 0) : 1,
+          }}
+          className='text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0 text-neutral-500'
+        >
+          {link.label}
+        </motion.span>
+      </span >
+    );
+  }
+
   return (
     <Link
       href={link.href}
@@ -206,7 +230,7 @@ export const SidebarLink = ({
 
 type Accounts = {
   id: string;
-  type: string; // me or member
+  type: string;
   name: string;
   avatar: string;
 };
@@ -260,14 +284,15 @@ export const SidebarAccount = ({
 }): React.JSX.Element => {
   const [selectedAccount, setSelectedAccount] = useState<Accounts>(accounts[0]);
   const { open } = useSidebar();
+  const [ accountClick, setAccountClick ] = useState(false);
 
   const handleSelectAccount = (account: Accounts) => {
     setSelectedAccount(account);
-    // Aqui você pode adicionar lógica para alterar a conta selecionada no sistema
+    setAccountClick(false);
   };
 
   return (
-    <Popover>
+    <Popover open={accountClick} onOpenChange={(value) => setAccountClick(value)}>
       <PopoverTrigger asChild>
         <div className="flex items-center justify-between rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
           <SidebarAccountItem account={selectedAccount} />

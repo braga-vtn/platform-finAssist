@@ -19,7 +19,7 @@ export function DataTableRowActions({ id, fileUrl }: Props) {
   const handleNotification = () => {
     if (!id) return;
     
-    toast('Cliente Criado', { description: `${id}` });
+    toast('Notificação Enviada', { description: "Foi enviado uma cópia do boleto para esse cliente." });
   };
 
   const handleDownload = () => {
@@ -32,7 +32,7 @@ export function DataTableRowActions({ id, fileUrl }: Props) {
     link.click();
     document.body.removeChild(link);
 
-    toast('Arquivo Baixado', { description: `${fileUrl}` });
+    toast('Arquivo Baixado', { description: 'O arquivo em pdf do boleto foi baixado. Verifique os downloads em seu computador.' });
   };
 
   return (

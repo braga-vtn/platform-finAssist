@@ -320,7 +320,7 @@ function ClientSelect({ value, disabled, onSetValue }: ClientSelectProps) {
                   <CommandItem
                     key={client.identifier}
                     value={client.identifier}
-                    className='flex flex-row items-center justify-between w-full'
+                    className='flex flex-row items-center justify-between w-full cursor-pointer'
                     onSelect={(currentValue) => {
                       onSetValue(currentValue === value ? "" : currentValue);
                       setOpen(false);

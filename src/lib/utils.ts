@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { clsx, type ClassValue } from 'clsx';
-import { differenceInCalendarDays, endOfDay, formatISO, startOfDay, subDays } from 'date-fns';
+import { differenceInCalendarDays, endOfDay, format, formatISO, startOfDay, subDays } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]): string {
@@ -19,6 +20,22 @@ export const calculateDateDifference = (from?: Date, to?: Date): number => {
 export function parseDate(value: any): Date {
   const parsed = new Date(value);
   return isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+export function formatDateClassic(date: string) {
+  if (!date) return date;
+
+  try {
+    const parsedDate = new Date(date);
+
+    if (isNaN(parsedDate.getTime())) {
+      return date;
+    }
+
+    return format(parsedDate, "d 'de' MMMM 'de' yyyy", { locale: ptBR });
+  } catch {
+    return date;
+  }
 }
 
 export const handleCurrencyChange = (value: string) => {

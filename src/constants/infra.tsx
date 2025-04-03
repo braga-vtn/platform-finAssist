@@ -36,7 +36,7 @@ export const ItemSidebar = [
   {
     id: 5,
     label: 'Sair',
-    href: '#',
+    href: '',
     icon: (
       <LogOut className="h-5 w-5 flex-shrink-0" />
     ),

@@ -60,7 +60,7 @@ export function ChartCalendar({ className, onDateChange }: CalendarDashboardProp
         <Button
           id="date"
           variant="style"
-          className={cn('w-auto justify-start text-left font-normal h-10 shadow-md select-none rounded-xl cursor-pointer bg-neutral-100 dark:bg-neutral-800 border dark:border-neutral-700', !date && 'text-muted-foreground')}
+          className={cn('w-auto justify-start text-left h-8 shadow-md select-none cursor-pointer bg-neutral-100 dark:bg-neutral-800 border dark:border-neutral-700', !date && 'text-muted-foreground')}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date?.from ? (
