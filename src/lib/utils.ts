@@ -3,9 +3,23 @@ import { clsx, type ClassValue } from 'clsx';
 import { differenceInCalendarDays, endOfDay, format, formatISO, startOfDay, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
+import zxcvbn from 'zxcvbn';
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
+}
+
+export const isStrongPassword = (password: string) => {
+  if (!password) return false;
+
+  const result = zxcvbn(password);
+  return result.score >= 3;
+}; 
+
+export function getBaseUrl(): string {
+  return process.env.NODE_ENV === 'production'
+    ? process.env.NEXT_PUBLIC_APP_URL!
+    : `http://localhost:${process.env.NEXT_PUBLIC_PORT}`;
 }
 
 export const calculateDateDifference = (from?: Date, to?: Date): number => {

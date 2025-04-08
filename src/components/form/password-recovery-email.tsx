@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { forgotPasswordAcc } from '@/app/_actions/auth';
 
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Logo } from '../global/logo';
@@ -23,9 +24,30 @@ export const FormPasswordRecoveryEmail = ({ emailRecovery, onEmailRecoveryChange
     router.push(url);
   };
 
-  const handlePasswordRecoveryEmail = () => {
-    toast('Código Enviado', {description: 'Insira o código de 6 dígitos que foi enviado para o seu email.'});
-    onChangeStep(3);
+  const handlePasswordRecoveryEmail = async () => {
+    if (!emailRecovery || !emailRecovery.includes('.') || !emailRecovery.includes('@')) {
+      toast('Email Inválido', { description: 'Informe um email válido para recuperar a senha.' });
+      return;
+    }
+
+    try {
+      const response = await forgotPasswordAcc(emailRecovery);
+      if (!response || !response.code) {
+        throw new Error();
+      }
+
+      switch (response.code) {
+      case 200:
+        toast('Código Enviado', { description: 'Se este e-mail estiver cadastrado em nosso sistema, você receberá um código para recuperação de conta.' });
+        onChangeStep(3);
+        break;
+      default: 
+        toast('Conta não Encontrada', { description: 'Verifique se informou um email válido!' });
+      }
+
+    } catch {
+      toast('Conta não Encontrada', { description: 'Verifique se informou um email válido!' });
+    }
   };
 
   return (

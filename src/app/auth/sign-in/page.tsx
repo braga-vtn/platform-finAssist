@@ -21,9 +21,9 @@ export default function SignIn(): JSX.Element {
     case 2:
       return <FormPasswordRecoveryEmail emailRecovery={emailRecovery} onEmailRecoveryChange={setEmailRecovery} onChangeStep={setStep} />;
     case 3:
-      return <FormPasswordRecoveryOtp otp={otp} onOtpChange={setOtp} onChangeStep={setStep} />;
+      return <FormPasswordRecoveryOtp emailRecovery={emailRecovery} otp={otp} onOtpChange={setOtp} onChangeStep={setStep} />;
     case 4:
-      return <FormPasswordRecovery newPassword={newPassword} confirmPassword={confirmPassword} onNewPasswordChange={setNewPassword} onConfirmPasswordChange={setConfirmPassword} onChangeStep={setStep} />;
+      return <FormPasswordRecovery newPassword={newPassword} emailRecovery={emailRecovery} otp={otp} confirmPassword={confirmPassword} onNewPasswordChange={setNewPassword} onConfirmPasswordChange={setConfirmPassword} onChangeStep={setStep} />;
     default:
       return <></>;
     }

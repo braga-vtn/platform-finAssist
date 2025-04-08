@@ -4,8 +4,9 @@ import Link, { LinkProps } from 'next/link';
 import React, { useState, createContext, useContext } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckIcon, ChevronsUpDown, Menu, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getBaseUrl } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { logoutAcc } from '@/app/_actions/auth';
 
 import {
   Popover,
@@ -184,7 +185,9 @@ export const SidebarLink = ({
   const { open, animate } = useSidebar();
   const router = useRouter();
 
-  const onRedirect = () => {
+  const onRedirect = async() => {
+    const domain = getBaseUrl();
+    await logoutAcc(domain);
     router.push('/auth/sign-in');
   };
 

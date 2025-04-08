@@ -5,6 +5,8 @@ import { Label } from '@/components/ui/label';
 import { useId, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { isStrongPassword } from '@/lib/utils';
+import { registerAcc } from '@/app/_actions/auth';
 
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Logo } from '../global/logo';
@@ -100,10 +102,50 @@ export const FormSignUp = () => {
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (step === 2) {
-      onRedirect('/auth/sign-in');
-      toast('Conta Criada', { description: 'Sua conta foi criada com sucesso na FinAssist!' });
+      try {
+        const data = {
+          name,
+          email,
+          password,
+        };
+
+        const response = await registerAcc(data, activationCode);
+        if (!response || !response.code) {
+          throw new Error();
+        }
+
+        switch (response.code) {
+        case 200:
+          onRedirect('/auth/sign-in');
+          toast('Conta Criada', { description: 'Sua conta foi criada com sucesso na FinAssist!' });
+          break;
+        case 201:
+          toast('Já Existe essa Conta', { description: 'Já existe uam conta com esse email, clique em Entrar.' });
+          setStep((prev) => prev - 1);
+          break;
+        case 400:
+          toast('Chave Inválida', { description: 'A chave de ativação fornecida é inválida ou já foi utilizada. Por favor, verifique se o valor inserido está correto.' });
+          setStep((prev) => prev - 1);
+          break;
+        default:
+          break;
+        }
+
+      } catch {
+        toast('Erro Inesperado', { description: 'Não foi possível criar sua conta, tente novamente mais tarde!' });
+      }
+    }
+
+    if (!email.includes('.') || !email.includes('@')) {
+      toast('Email Inválido', { description: 'Informe um email válido para criar sua conta.' });
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      toast('Senha Fraca', { description: 'Informe uma senha mais segura para sua conta.' });
+      return;
     }
 
     setStep((prev) => prev + 1);

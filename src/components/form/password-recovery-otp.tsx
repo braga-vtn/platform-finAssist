@@ -8,26 +8,49 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { toast } from 'sonner';
+import { verifyCodeAcc } from '@/app/_actions/auth';
 
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Logo } from '../global/logo';
 
 type Props = {
+  emailRecovery: string;
   otp: string;
   onOtpChange: (_value: string) => void;
   onChangeStep: (_value: number) => void;
 }
 
-export const FormPasswordRecoveryOtp = ({ otp, onOtpChange, onChangeStep }: Props) => {
+export const FormPasswordRecoveryOtp = ({ emailRecovery, otp, onOtpChange, onChangeStep }: Props) => {
   const router = useRouter();
 
   const onRedirect = (url: string) => {
     router.push(url);
   };
 
-  const handlePasswordRecoveryOtp = () => {
-    toast('Insira a Nova Senha', {description: 'Digite uma nova senha segura para sua conta.'});
-    onChangeStep(4);
+  const handlePasswordRecoveryOtp = async() => {
+    if (!otp || !emailRecovery) {
+      toast('Informe o Código', { description: 'O código deve conter os 6 digitos enviados para o seu email.' });
+      return;
+    }
+
+    try {
+      const response = await verifyCodeAcc(emailRecovery, otp);
+      if (!response || !response.code) {
+        throw new Error();
+      }
+
+      switch (response.code) {
+      case 200:
+        toast('Insira a Nova Senha', {description: 'Digite uma nova senha segura para sua conta.'});
+        onChangeStep(4);
+        break;
+      default: 
+        toast('Código Inválido', { description: 'Confira se o código informado é igual ao enviado para seu email.' });
+      }
+
+    } catch {
+      toast('Código Inválido', { description: 'Confira se o código informado é igual ao enviado para seu email.' });
+    }
   };
 
   return (

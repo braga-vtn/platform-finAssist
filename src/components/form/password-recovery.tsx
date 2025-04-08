@@ -5,19 +5,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { resetPasswordAcc } from '@/app/_actions/auth';
 
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Logo } from '../global/logo';
 
 type Props = {
   newPassword: string;
+  emailRecovery: string;
+  otp: string;
   confirmPassword: string;
   onNewPasswordChange: (_value: string) => void;
   onConfirmPasswordChange: (_value: string) => void;
   onChangeStep: (_value: number) => void;
 }
 
-export const FormPasswordRecovery = ({ newPassword, confirmPassword, onNewPasswordChange, onConfirmPasswordChange, onChangeStep }: Props) => {
+export const FormPasswordRecovery = ({ newPassword, emailRecovery, otp, confirmPassword, onNewPasswordChange, onConfirmPasswordChange, onChangeStep }: Props) => {
   const id = useId();
   const router = useRouter();
 
@@ -25,9 +28,30 @@ export const FormPasswordRecovery = ({ newPassword, confirmPassword, onNewPasswo
     router.push(url);
   };
 
-  const handlePasswordRecovery = () => {
-    toast('Senha Alterada', { description: 'Acesse sua conta com a sua nova senha!' });
-    onChangeStep(1);
+  const handlePasswordRecovery = async () => {
+    if (!newPassword || !confirmPassword || (newPassword !== confirmPassword)) {
+      toast('Valores Inválidos', { description: 'Para substituir a senha da sua conta, é necessário que informe e confirme uma senha segura.' });
+      return;
+    }
+
+    try {
+      const response = await resetPasswordAcc(emailRecovery, otp, newPassword);
+      if (!response || !response.code) {
+        throw new Error();
+      }
+
+      switch (response.code) {
+      case 200:
+        toast('Senha Alterada', { description: 'Acesse sua conta com a sua nova senha!' });
+        onChangeStep(1);
+        break;
+      default:
+        toast('Valores Inválidos', { description: 'Para substituir a senha da sua conta, é necessário que informe e confirme uma senha segura.' });
+      }
+
+    } catch {
+      toast('Valores Inválidos', { description: 'Para substituir a senha da sua conta, é necessário que informe e confirme uma senha segura.' });
+    }
   };
 
   return (
