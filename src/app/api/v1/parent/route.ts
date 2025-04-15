@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import { getUserByParentId } from '@/app/_actions/user';
 
 export async function GET(req: NextRequest) {

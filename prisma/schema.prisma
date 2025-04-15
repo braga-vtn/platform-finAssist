@@ -37,9 +37,9 @@ model User {
 
 model Clients {
   id             Int      @id @default(autoincrement())
-  identifier     String   @unique // Número de Cliente - manual
+  identifier     String // Número de Cliente - manual
   name           String // Nome da Empresa
-  register       String   @unique // CNPJ/CPF
+  register       String // CNPJ/CPF
   city           String
   uf             String
   zipcode        String

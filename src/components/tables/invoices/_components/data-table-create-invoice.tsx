@@ -364,7 +364,7 @@ type ClientProps = {
   SendByWhatsapp: boolean;
   SendByEmail: boolean;
   memberId: string;
-  observation?: string | undefined;
+  observation?: string | undefined | null;
   dueAt: string;
   createdAt: string;
 }

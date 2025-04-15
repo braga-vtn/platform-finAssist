@@ -31,7 +31,7 @@ type Team = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ProfileForm({ form, team }: { form: any, team: Team[] }) {
+export function ProfileForm({ form, team, edition = false }: { form: any, team: Team[], edition?: boolean }) {
   const id = useId();
   const [date, setDate] = useState<Date>(parseDate(form.getValues('dueAt')));
   const [formattedValue, setFormattedValue] = useState(handleCurrencyChange(form.getValues('value')) || '');
@@ -58,7 +58,7 @@ export function ProfileForm({ form, team }: { form: any, team: Team[] }) {
           name="identifier"
           label="Número do Cliente"
         >
-          <Input className="w-full" />
+          <Input disabled={edition} className="w-full" />
         </FormFildItem>
       </div>
       <div className="flex flex-row items-center w-full gap-2 px-1">

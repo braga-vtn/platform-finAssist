@@ -36,7 +36,7 @@ export const getUserByXr = async (xr: string) => {
       accounts.push({
         id: user.clerkId,
         type: 'me',
-        selected: false,
+        selected: !user.parent,
         name: user.name,
         avatar: user.avatar,
       });
@@ -45,7 +45,7 @@ export const getUserByXr = async (xr: string) => {
         where: {
           memberId: user.clerkId,
         },
-        select: { 
+        select: {
           ownerId: true,
           avatarCompany: true,
           nameCompany: true,
@@ -58,7 +58,7 @@ export const getUserByXr = async (xr: string) => {
           accounts.push({
             id: member.ownerId,
             type: 'member',
-            selected: false,
+            selected: user.parent === member.ownerId,
             name: member.nameCompany,
             avatar: member.avatarCompany,
           });
@@ -85,7 +85,7 @@ export const getUserByParentId = async (userId: string, parentId: string) => {
   try {
     const parent = await client.user.findUnique({
       where: {
-        parentId,
+        clerkId: parentId,
       },
       select: {
         clerkId: true,

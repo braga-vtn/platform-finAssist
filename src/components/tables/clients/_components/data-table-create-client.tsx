@@ -20,6 +20,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Client } from '@/types/client';
 import { states } from '@/constants/infra';
+import { extractNumericValue } from '@/lib/utils';
 
 type Team = {
   value: string;
@@ -67,7 +68,7 @@ export function DataTableCreateClient({
       neighborhood: "",
       address: "",
       dueAt: new Date().toISOString(),
-      value: "0",
+      value: '0',
       email: "",
       phone: "",
       SendByWhatsapp: true,
@@ -84,8 +85,9 @@ export function DataTableCreateClient({
       toast('Formulário Incompleto', { description: 'Você não preencheu todos os campos obrigatórios do formulário!' });
       return;
     }
-    
-    onCreateClient(values);
+
+    const data = { ...values, value: extractNumericValue(values.value) };
+    onCreateClient(data);
   }
 
   return (

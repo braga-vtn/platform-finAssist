@@ -11,7 +11,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useUser } from '@/context/user';
 import { Spinner } from '@/components/ui/spinner';
 
-import { startParent, startUse } from '../_actions/config';
+import { startParent, startUse, updateParent } from '../_actions/config';
 import { logoutAcc } from '../_actions/auth';
 
 type Props = { children: React.ReactNode };
@@ -28,6 +28,7 @@ const Layout = ({ children }: Props): JSX.Element => {
   const { userId, setAdmin, setUserId, setName, setEmail, setAvatar } = useUser();
   const [isMobile, setIsMobile] = useState(false);
   const [open, setOpen] = useState(false);
+  const [userIdOld, setUserIdOld] = useState('');
   const [accounts, setAccounts] = useState<Accounts[]>([]);
   const pathname = usePathname();
   const router = useRouter();
@@ -56,6 +57,7 @@ const Layout = ({ children }: Props): JSX.Element => {
 
       const { userId, name, email, avatar, parent, accounts } = userData;
       if (!userId) throw new Error();
+      setUserIdOld(userId);
       setAccounts(accounts);
 
       let admin = false;
@@ -67,7 +69,6 @@ const Layout = ({ children }: Props): JSX.Element => {
           admin = true;
         } else {
           const { userId, name, email, avatar } = parentData;
-
           setName(name);
           setEmail(email);
           setAvatar(avatar);
@@ -101,7 +102,30 @@ const Layout = ({ children }: Props): JSX.Element => {
       selected: account.id === id,
     }));
     setAccounts(updatedAccounts);
+    switchAccount(id);
+  };
+
+  // eslint-disable-next-line consistent-return
+  const switchAccount = async (id: string): Promise<boolean | void> => {
+    if (!id) {
+      return onLogout();
+    }
+    
     setUserId(id);
+    
+    let parent = '';
+    if (id === userIdOld) {
+      setAdmin(true);
+    } else {
+      setAdmin(false);
+      parent = id;
+    }
+  
+    try {
+      await updateParent(parent, userIdOld);
+    } catch {
+      return false;
+    }
   };
 
   if (isMobile) {

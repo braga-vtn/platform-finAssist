@@ -46,7 +46,7 @@ export const ProfileTabs = () => {
   const [fileTemp, setFileTemp] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { userId } = useUser();
-
+ 
   const handleEditClick = useCallback(() => {
     setAvatarNow("");
     setFileTemp(null);

@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { z } from 'zod';
 import { Check, X } from 'lucide-react';
 import { formatDateClassic, formatRegister } from '@/lib/utils';
+import { Team } from '@/types/team';
 
 import { DataTableColumnHeader } from './data-table-column-header';
 
@@ -15,7 +16,7 @@ export const taskSchema = z.object({
   name: z.string(),
   register: z.string(),
   address: z.string().optional(),
-  value: z.string(),
+  value: z.number(),
   email: z.string().optional(),
   phone: z.string().optional(),
   SendByWhatsapp: z.boolean(),
@@ -27,11 +28,6 @@ export const taskSchema = z.object({
 });
 
 export type Task = z.infer<typeof taskSchema>;
-
-type Team = {
-  value: string;
-  label: string;
-}
 
 function handlerMemberLabel(memberId: string, team: Team[]) {
   if (!memberId) return '';

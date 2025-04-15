@@ -18,8 +18,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
-import { Client } from '@/types/client';
+import { Client, Client2 } from '@/types/client';
 import { states } from '@/constants/infra';
+import { Team } from '@/types/team';
 
 const formSchema = z.object({
   id: z.number().optional(),
@@ -32,7 +33,7 @@ const formSchema = z.object({
   neighborhood: z.string().min(1, { message: "" }),
   address: z.string().optional(),
   dueAt: z.string().min(1, { message: "" }),
-  value: z.string().min(1, { message: "" }),
+  value: z.number().default(0),
   email: z.string().optional(),
   phone: z.string().optional(),
   SendByWhatsapp: z.boolean().default(false),
@@ -41,43 +42,15 @@ const formSchema = z.object({
   observation: z.string().optional(),
 });
 
-type UF = (typeof states)[number];
-
-type Item = {
-  id: number;
-  identifier: string;
-  name: string;
-  register: string;
-  city: string;
-  uf: UF;
-  zipcode: string;
-  neighborhood: string;
-  address?: string | undefined;
-  value: string;
-  email?: string | undefined;
-  phone?: string | undefined;
-  SendByWhatsapp: boolean;
-  SendByEmail: boolean;
-  memberId: string;
-  observation?: string | undefined;
-  dueAt: string;
-  createdAt?: string;
-};
-
-type Team = {
-  value: string;
-  label: string;
-}
-
 type Props = {
   title: string;
   description: string;
-  item: Item | null;
+  item: Client2 | null;
   open: boolean;
   team: Team[];
   onOpenChange: (_open: boolean) => void;
   onUpdateClient: (_item: Client) => void;
-  onDeleteClient: (_id: number) => void;
+  onDeleteClient: (_id: number[]) => void;
 };
 
 const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDeleteClient }: Props): React.JSX.Element => {
@@ -94,7 +67,7 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
       neighborhood: "",
       address: '',
       dueAt: '',
-      value: '',
+      value: 0,
       email: '',
       phone: '',
       SendByWhatsapp: false,
@@ -149,7 +122,7 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
       return;
     }
 
-    onDeleteClient(id);
+    onDeleteClient([id]);
   };
 
   return (
@@ -170,7 +143,7 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
                 </DialogTitle>
                 <DialogDescription asChild>
                   <div className="p-5">
-                    <ProfileForm form={form} team={team} />
+                    <ProfileForm edition={true} form={form} team={team} />
                   </div>
                 </DialogDescription>
               </DialogHeader>

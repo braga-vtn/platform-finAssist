@@ -81,7 +81,7 @@ export function DataTableFacetedFilter<TData, TValue>({
       <PopoverContent className="w-auto p-0" align="start">
         <Command>
           <CommandList>
-            <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
+            <CommandEmpty className='px-3 pt-2 text-sm'>Nenhum resultado encontrado.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
                 const isSelected = selectedValues.has(option.value);

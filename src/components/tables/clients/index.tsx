@@ -1,51 +1,61 @@
-import { useState } from 'react';
-import { Client } from '@/types/client';
-import { states } from '@/constants/infra';
+import { useEffect, useState } from 'react';
+import { Client, Client2 } from '@/types/client';
+import { Team } from '@/types/team';
 
 import { DataTable } from './_components/data-table';
 import DialogClients from './_components/dialog-clients';
 import { createColumns } from './_components/columns';
 
-type UF = (typeof states)[number];
-
-type Item = {
+type ItemProps = {
   id: number;
   identifier: string;
   name: string;
   register: string;
-  city: string;
-  uf: UF;
-  zipcode: string;
-  neighborhood: string;
-  address?: string | undefined;
-  value: string;
-  email?: string | undefined;
-  phone?: string | undefined;
+  address: string | undefined;
+  value: number;
+  email: string | undefined;
+  phone: string | undefined;
   SendByWhatsapp: boolean;
   SendByEmail: boolean;
   memberId: string;
-  observation?: string | undefined;
-  dueAt: string;
+  observation: string | undefined;
   createdAt: string;
-};
-
-type Team = {
-  value: string;
-  label: string;
+  dueAt: string;
 }
 
 type Props = {
-  items: Item[];
+  items: Client2[];
   team: Team[];
   onUpdateClient: (_item: Client) => void;
-  onDeleteClient: (_id: number) => void;
+  onDeleteClient: (_id: number[]) => void;
   onCreateClient: (_item: Client) => void;
-  onDeleteGroupClient: (_ids: number[]) => void;
 };
 
-export default function TableClients({ items, team, onUpdateClient, onDeleteClient, onCreateClient, onDeleteGroupClient }: Props) {
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+export default function TableClients({ items, team, onUpdateClient, onDeleteClient, onCreateClient }: Props) {
+  const [selectedItem, setSelectedItem] = useState<Client2 | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [tableItems, setTableItems] = useState<ItemProps[]>([]);
+
+  useEffect(() => {
+    const formattedItems = items.map((item) => ({
+      id: item.id,
+      identifier: item.identifier,
+      name: item.name,
+      register: item.register,
+      address: item.address,
+      value: item.value,
+      email: item.email,
+      phone: item.phone,
+      SendByWhatsapp: item.SendByWhatsapp,
+      SendByEmail: item.SendByEmail,
+      memberId: item.memberId,
+      observation: item.observation || undefined,
+      createdAt: item.createdAt,
+      dueAt: item.dueAt,
+    }));
+
+    setTableItems(formattedItems);
+  }, [items]);
 
   const columns = createColumns(team);
 
@@ -59,12 +69,12 @@ export default function TableClients({ items, team, onUpdateClient, onDeleteClie
   return (
     <div>
       <DataTable
-        data={items}
+        data={tableItems}
         team={team}
         columns={columns}
         onSelect={handleRowSelect}
         onCreateClient={onCreateClient}
-        onDeleteGroupClient={onDeleteGroupClient}
+        onDeleteGroupClient={onDeleteClient}
       />
       <DialogClients
         title={''}

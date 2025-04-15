@@ -92,6 +92,7 @@ export const getTeam = async (userId: string) => {
         avatar: true,
         name: true,
         email: true,
+        memberId: true,
       },
     });
 

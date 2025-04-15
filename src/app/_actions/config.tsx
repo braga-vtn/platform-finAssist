@@ -1,6 +1,7 @@
 'use server';
 import { apiRequest } from '@/helper/apiRequest';
- 
+import { client } from '@/lib/prisma';
+
 export const startUse = async (domain: string) => {
   try {
     const xrValue = await apiRequest(domain, '/api/v1/cookie?ck=_xr');
@@ -19,6 +20,22 @@ export const startParent = async (userId: string, parentId: string, domain: stri
     if (!parentId) return null;
 
     return await apiRequest(domain, `/api/v1/parent?id=${parentId}&userId=${userId}`);
+  } catch {
+    return false;
+  }
+};
+
+export const updateParent = async (parent: string | null, userId: string) => {
+  try {
+    await client.user.update({
+      where: {
+        clerkId: userId,
+      },
+      data: {
+        parent
+      },
+    });
+    return true;
   } catch {
     return false;
   }

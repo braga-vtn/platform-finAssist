@@ -52,8 +52,26 @@ export function formatDateClassic(date: string) {
   }
 }
 
-export const handleCurrencyChange = (value: string) => {
-  const numericValue = value.replace(/\D/g, '');
+export const formatCurrency = (value: number) => {
+  return value.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
+export const extractNumericValue = (formattedString: string): number => {
+  const numericString = formattedString.replace(/[^\d,]/g, '').replace(',', '.');
+  return parseFloat(numericString)*1000 || 0;
+};
+
+export const parseCurrency = (value: string): number => {
+  const cleaned = value.replace(/\D/g, '');
+  return cleaned ? parseInt(cleaned, 10) / 100 : 0;
+};
+
+export const handleCurrencyChange = (value: string | number) => {
+  const valueStr = typeof value === 'string' ? value : value.toString();
+  const numericValue = valueStr.replace(/\D/g, '');
   const number = numericValue ? parseInt(numericValue, 10) : 0;
   const formatted = (number / 100).toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
