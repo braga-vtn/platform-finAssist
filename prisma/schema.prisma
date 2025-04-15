@@ -7,32 +7,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model ActivationKey {
+  id        Int       @id @default(autoincrement())
+  rescued   Boolean   @default(false)
+  secretKey String    @unique
+  email     String?
+  rescuedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
 model User {
-  id              Int        @id @default(autoincrement())
-  clerkId         String     @unique @default(uuid())
-  avatar          String?
-  name            String?
-  email           String     @unique
-  password        String
-  isEmailVerified Boolean    @default(false)
-  updatedAt       DateTime   @default(now()) @updatedAt
-  createdAt       DateTime   @default(now())
-  Clients         Clients[]
-  Team            Team[]
-  Invoices        Invoices[]
+  id           Int            @id @default(autoincrement())
+  clerkId      String         @unique @default(uuid())
+  avatar       String?
+  name         String
+  email        String         @unique
+  password     String
+  parent       String?
+  parentId     String         @unique @default(uuid())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  createdAt    DateTime       @default(now())
+  Clients      Clients[]
+  Team         Team[]
+  Invoices     Invoices[]
+  Integrations Integrations[]
+  Messages     Messages[]
+  Token        Token[]
 }
 
 model Clients {
   id             Int      @id @default(autoincrement())
-  identifier     String   @unique // Nosso Número de Cliente;
-  name           String // Nome da Empresa;
-  register       String   @unique // Número do CNPJ/CPF;
+  identifier     String   @unique // Número de Cliente - manual
+  name           String // Nome da Empresa
+  register       String   @unique // CNPJ/CPF
   city           String
   uf             String
   zipcode        String
   neighborhood   String
   address        String
-  value          Int // Valor das parcelas;
+  value          Int // Valor das parcelas
   email          String
   phone          String
   SendByWhatsapp Boolean  @default(true)
@@ -47,28 +60,85 @@ model Clients {
 }
 
 model Team {
-  id          String   @id @default(uuid())
-  name        String
-  email       String
-  nameCompany String // nome da conta de quem convidou
-  ownerId     String // clerkId de quem convidou
-  updatedAt   DateTime @default(now()) @updatedAt
-  createdAt   DateTime @default(now())
-  memberId    String // clerkId do convidado
-  Member      User     @relation(fields: [memberId], references: [clerkId], onDelete: Cascade)
+  id            String   @id @default(uuid())
+  parentId      String // parentId de quem convidou
+  avatar        String?
+  name          String
+  email         String
+  avatarCompany String? // avatar da conta de quem convidou
+  nameCompany   String // nome da conta de quem convidou
+  ownerId       String // clerkId de quem convidou
+  updatedAt     DateTime @default(now()) @updatedAt
+  createdAt     DateTime @default(now())
+  memberId      String // clerkId do convidado
+  Member        User     @relation(fields: [memberId], references: [clerkId], onDelete: Cascade)
+}
+
+enum TokenType {
+  refresh
+  team
+  register
+}
+
+model Token {
+  id        Int       @id @default(autoincrement())
+  type      TokenType
+  token     String    @unique
+  payload   Json? //avatar*, name, email, permissions, parentId (de quem convidou) and role
+  expires   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String // userId do convidado
+  User      User      @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+}
+
+enum InvoicesStatus {
+  paid
+  pending
+  canceled
 }
 
 model Invoices {
-  id         String   @id @default(uuid())
-  externalId String   @unique // inter
+  id         String         @id @default(uuid())
+  externalId String         @unique // inter
   identifier String
-  status     String //paid, pending or canceled
+  status     InvoicesStatus
   value      Int
   payload    Json
   fileUrl    String?
   dueAt      DateTime
-  updatedAt  DateTime @default(now()) @updatedAt
-  createdAt  DateTime @default(now())
+  updatedAt  DateTime       @default(now()) @updatedAt
+  createdAt  DateTime       @default(now())
   userId     String
-  User       User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  User       User           @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+}
+
+enum IntegrationType {
+  inter
+  whatsapp
+  email
+}
+
+model Integrations {
+  id        Int             @id @default(autoincrement())
+  type      IntegrationType
+  config    Json
+  updatedAt DateTime        @default(now()) @updatedAt
+  createdAt DateTime        @default(now())
+  userId    String
+  User      User            @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+}
+
+enum MessageType {
+  whatsapp
+  email
+}
+
+model Messages {
+  id        Int         @id @default(autoincrement())
+  type      MessageType
+  payload   Json
+  createdAt DateTime    @default(now())
+  userId    String
+  User      User        @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
 }

@@ -1,5 +1,4 @@
 'use client';
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -20,48 +19,88 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useUser } from "@/context/user";
+import { Spinner } from "@/components/ui/spinner";
+import { deleteTeam, getTeam, postTeam } from "@/app/_actions/settings";
 
-export const team = [
-  {
-    id: '26d16167-0867-4ef6-b519-62eb04c6d190',
-    name: 'matheus Braga',
-    avatar: '',
-    email: 'matheusbr722@gmail.com',
-  },
-  {
-    id: '26edce72-7bb6-4618-9fb4-5119d8fb4df5',
-    name: 'Bruna Martins',
-    avatar: '',
-    email: 'bruna@gmail.com',
-  },
-  {
-    id: '4d98b90b-1b71-4b2c-a888-b94d66e20fe8',
-    name: 'Giovanna Silva',
-    avatar: '',
-    email: 'giovanna@gmail.com',
-  }
-];
+type teamData = {
+  id: string;
+  avatar: string | null;
+  name: string;
+  email: string;
+}
 
 export const TeamTabs = () => {
-  const [ members, setMembers] = useState(team);
-  const [ filteredMembers, setFilteredMembers] = useState(team);
+  const [members, setMembers] = useState<teamData[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<teamData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { userId } = useUser();
 
-  const handleActionDialog = (type: string, email?: string) => {
+  useEffect(() => {
+    if (!userId) return;
+    setLoading(true);
+
+    const fetchData = async () => {
+      try {
+        const teamData = await getTeam(userId);
+        if (!teamData) {
+          throw new Error();
+        }
+
+        setMembers(teamData || []);
+        setFilteredMembers(teamData || []);
+      } catch {
+        toast('Erro Inesperado', { description: 'Não foi possível buscar sua equipe, tente novamente mais tarde!' });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  const handleActionDialog = async (type: string, email: string) => {
+    if (!userId) return;
+    
     if (type === 'create') {
       if (!email) {
         toast('Email Inválido', { description: 'Você não informou um email válido!' });
         return;
       }
-      toast('Convite Enviado', { description: 'O novo membro deve aceitar o seu convite para ser adicionado em sua equipe!' });
+
+      try {
+        const member = await postTeam(email, userId);
+        if (!member) {
+          throw new Error();
+        }
+
+        setMembers(prevMembers => [...prevMembers, member]);
+        setFilteredMembers(prevMembers => [...prevMembers, member]);
+
+        toast('Membro Adicionado', { description: 'O novo membro está adicionado em sua equipe!' });
+      } catch {
+        toast('Erro Inesperado', { description: 'Não foi possível adicionar um membro em sua equipe, tente novamente mais tarde!' });
+      }
+
       return;
     }
 
-    const remainingMembers = members.filter((item) => item.email !== email);
-    setMembers(remainingMembers);
-    setFilteredMembers(remainingMembers);
-    toast('Membro Removido', { description: `O membro ${email} foi removido da sua equipe com sucesso!` });
+    try {
+      const member = await deleteTeam(email, userId);
+      if (!member) {
+        throw new Error();
+      }
+
+      const remainingMembers = members.filter((item) => item.email !== email);
+      setMembers(remainingMembers);
+      setFilteredMembers(remainingMembers);
+
+      toast('Membro Removido', { description: `O membro ${email} foi removido da sua equipe com sucesso!` });
+    } catch {
+      toast('Erro Inesperado', { description: 'Não foi possível remover um membro em sua equipe, tente novamente mais tarde!' });
+    }
   };
 
   const handleSearch = (term: string) => {
@@ -69,32 +108,44 @@ export const TeamTabs = () => {
       setFilteredMembers(members);
       return;
     }
-    
+
     const searchTerm = term.toLowerCase();
-    
+
     const filteredMembers = members.filter((member) => {
       return (
-        member.name.toLowerCase().includes(searchTerm) || 
+        member.name.toLowerCase().includes(searchTerm) ||
         member.email.toLowerCase().includes(searchTerm)
       );
     });
-    
+
     setFilteredMembers(filteredMembers);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[calc(90vh-50px)]">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="w-3/5 mt-4">
       <HeaderTeamTabs onSearch={handleSearch} onActionDialog={handleActionDialog} />
-      {filteredMembers.map((item) =>
-        <ItemTeamTabs key={item.id} name={item.name} avatar={item.avatar} email={item.email} onActionDialog={handleActionDialog} />
-      )}
+      {filteredMembers.length > 0 ?
+        filteredMembers.map((item) =>
+          <ItemTeamTabs key={item.id} name={item.name} avatar={item.avatar || ''} email={item.email} onActionDialog={handleActionDialog} />
+        )
+        :
+        <p className="mt-48 text-sm text-muted-foreground text-center">Nenhum membro encontrado</p>
+      }
     </div>
   );
 };
 
 type HeaderTeamProps = {
   onSearch: (_term: string) => void;
-  onActionDialog: (_type: string, _email?: string) => void;
+  onActionDialog: (_type: string, _email: string) => void;
 }
 
 const HeaderTeamTabs = ({ onSearch, onActionDialog }: HeaderTeamProps) => {
@@ -124,7 +175,7 @@ type ItemTeamProps = {
   avatar: string;
   name: string;
   email: string;
-  onActionDialog: (_type: string, _email?: string) => void;
+  onActionDialog: (_type: string, _email: string) => void;
 }
 
 const ItemTeamTabs = ({ avatar, name, email, onActionDialog }: ItemTeamProps) => {
@@ -153,7 +204,7 @@ type DialogTeamProps = {
   type: string;
   emailOld?: string;
   children: React.ReactNode;
-  onActionDialog: (_type: string, _email?: string) => void;
+  onActionDialog: (_type: string, _email: string) => void;
 }
 
 const DialogTeam = ({ type, emailOld, children, onActionDialog }: DialogTeamProps) => {

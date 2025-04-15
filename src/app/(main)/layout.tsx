@@ -1,21 +1,43 @@
 'use client';
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Sidebar, SidebarAccount, SidebarBody, SidebarLink } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
+import { cn, getBaseUrl } from '@/lib/utils';
 import { ItemSidebar } from '@/constants/infra';
 import { ToogleTheme } from '@/components/global/toogle-theme';
 import { Container } from '@/components/global/container';
-import { usePathname } from 'next/navigation';
-import { accountsSidebar } from '@/constants/faker';
+import { usePathname, useRouter } from 'next/navigation';
+import { useUser } from '@/context/user';
+import { Spinner } from '@/components/ui/spinner';
+
+import { startParent, startUse } from '../_actions/config';
+import { logoutAcc } from '../_actions/auth';
 
 type Props = { children: React.ReactNode };
 
+type Accounts = {
+  id: string; // clerkId
+  type: string; // me or member
+  selected: boolean;
+  name: string;
+  avatar: string | null;
+};
+
 const Layout = ({ children }: Props): JSX.Element => {
+  const { userId, setAdmin, setUserId, setName, setEmail, setAvatar } = useUser();
   const [isMobile, setIsMobile] = useState(false);
   const [open, setOpen] = useState(false);
+  const [accounts, setAccounts] = useState<Accounts[]>([]);
   const pathname = usePathname();
+  const router = useRouter();
+  const startedRef = useRef(false);
+
+  const onLogout = useCallback(async () => {
+    const domain = getBaseUrl();
+    await logoutAcc(domain);
+    router.push('/auth/sign-in');
+  }, [router]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -23,6 +45,64 @@ const Layout = ({ children }: Props): JSX.Element => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  const onStart = useCallback(async () => {
+    try {
+      const domain = getBaseUrl();
+      if (!domain) throw new Error();
+
+      const userData = await startUse(domain);
+      if (!userData) throw new Error();
+
+      const { userId, name, email, avatar, parent, accounts } = userData;
+      if (!userId) throw new Error();
+      setAccounts(accounts);
+
+      let admin = false;
+      if (!parent) {
+        admin = true;
+      } else {
+        const parentData = await startParent(userId, parent, domain);
+        if (!parentData) {
+          admin = true;
+        } else {
+          const { userId, name, email, avatar } = parentData;
+
+          setName(name);
+          setEmail(email);
+          setAvatar(avatar);
+          setUserId(userId);
+          admin = false;
+        }
+      }
+
+      setAdmin(admin);
+      if (admin) {
+        setName(name);
+        setEmail(email);
+        setAvatar(avatar);
+        setUserId(userId);
+      }
+
+    } catch {
+      onLogout();
+    }
+  }, [setAvatar, setEmail, setName, setUserId, setAdmin, onLogout]);
+
+  useEffect(() => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    onStart();
+  }, [onStart]);
+
+  const handleSelectAccount = (id: string) => {
+    const updatedAccounts = accounts.map((account) => ({
+      ...account,
+      selected: account.id === id,
+    }));
+    setAccounts(updatedAccounts);
+    setUserId(id);
+  };
 
   if (isMobile) {
     return (
@@ -39,7 +119,7 @@ const Layout = ({ children }: Props): JSX.Element => {
         'h-screen'
       )}
     >
-      <Sidebar open={open} setOpen={setOpen}>  
+      <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {open ? <Logo /> : <LogoIcon />}
@@ -50,14 +130,19 @@ const Layout = ({ children }: Props): JSX.Element => {
             </div>
           </div>
           <div>
-            <SidebarAccount accounts={accountsSidebar}/>
+            <SidebarAccount accounts={accounts} onSelectAccount={handleSelectAccount} />
           </div>
         </SidebarBody>
       </Sidebar>
       <div className="flex flex-1 overflow-hidden">
         <div className="p-2 md:p-10 border-l border-t border-neutral-200 dark:border-neutral-700 rounded-tl-2xl bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full overflow-y-auto">
           <Container>
-            {children}
+            {!userId ?
+              <div className="flex justify-center items-center h-[calc(90vh-50px)]">
+                <Spinner />
+              </div>
+              :
+              children}
           </Container>
         </div>
       </div>

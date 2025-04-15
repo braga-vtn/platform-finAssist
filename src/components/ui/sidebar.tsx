@@ -1,7 +1,6 @@
 'use client';
-
 import Link, { LinkProps } from 'next/link';
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckIcon, ChevronsUpDown, Menu, X } from 'lucide-react';
 import { cn, getBaseUrl } from '@/lib/utils';
@@ -234,8 +233,9 @@ export const SidebarLink = ({
 type Accounts = {
   id: string;
   type: string;
+  selected: boolean;
   name: string;
-  avatar: string;
+  avatar: string | null;
 };
 
 export const SidebarAccountItem = ({
@@ -254,8 +254,8 @@ export const SidebarAccountItem = ({
       className='flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer'
       onClick={onClick}
     >
-      <Avatar>
-        <AvatarImage className="h-7 w-7 flex-shrink-0 rounded-full" src={account.avatar} />
+      <Avatar className='border border-neutral-300 dark:border-neutral-700'>
+        {account.avatar && <AvatarImage className="flex-shrink-0 rounded-full" src={account.avatar} />}
       </Avatar>
       <motion.span
         animate={{
@@ -282,17 +282,36 @@ export const SidebarAccountItem = ({
 
 export const SidebarAccount = ({
   accounts,
+  onSelectAccount,
 }: {
   accounts: Accounts[];
+  onSelectAccount: (_id: string) => void;
 }): React.JSX.Element => {
-  const [selectedAccount, setSelectedAccount] = useState<Accounts>(accounts[0]);
-  const { open } = useSidebar();
+  const [selectedAccount, setSelectedAccount] = useState<Accounts | null>(null);
   const [ accountClick, setAccountClick ] = useState(false);
+  const { open } = useSidebar();
 
   const handleSelectAccount = (account: Accounts) => {
     setSelectedAccount(account);
+    onSelectAccount(account.id);
     setAccountClick(false);
   };
+
+  useEffect(() => {
+    if (!accounts || accounts.length < 1) return;
+
+    const selectAcc = accounts.findLast((item) => item.selected === true);
+    if (!selectAcc) {
+      setSelectedAccount(accounts[0]);
+      return;
+    }
+
+    setSelectedAccount(selectAcc);
+  }, [accounts]);
+
+  if (!selectedAccount || !accounts || accounts.length < 1) {
+    return <></>;
+  }
 
   return (
     <Popover open={accountClick} onOpenChange={(value) => setAccountClick(value)}>
@@ -315,8 +334,8 @@ export const SidebarAccount = ({
                 >
                   <div className="flex items-center justify-between w-full gap-2">
                     <div className='flex flex-row gap-2 items-center'>
-                      <Avatar>
-                        <AvatarImage className="h-7 w-7 flex-shrink-0 rounded-full" src={account.avatar} />
+                      <Avatar className='border'>
+                        {account.avatar && <AvatarImage className="flex-shrink-0 rounded-full" src={account.avatar} />}
                       </Avatar>
                       <span className="text-sm">
                         {account.name}

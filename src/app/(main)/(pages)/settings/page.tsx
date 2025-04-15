@@ -18,7 +18,7 @@ export default function Page() {
           <ProfileTabs />
         </TabsContent>
         <TabsContent value="team">
-          <TeamTabs /> 
+          <TeamTabs />
         </TabsContent>
         <TabsContent value="integrations">
           <IntegrationsTabs />
