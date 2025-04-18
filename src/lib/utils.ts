@@ -59,9 +59,35 @@ export const formatCurrency = (value: number) => {
   });
 };
 
+export const formatCpfCnpj = (value: string) => {
+  const cleanedValue = value.replace(/\D/g, '');
+
+  if (cleanedValue.length <= 11) {
+    // CPF
+    return cleanedValue
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1');
+  } else {
+    // CNPJ
+    return cleanedValue
+      .replace(/(\d{2})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  }
+};
+
 export const extractNumericValue = (formattedString: string): number => {
   const numericString = formattedString.replace(/[^\d,]/g, '').replace(',', '.');
   return parseFloat(numericString)*1000 || 0;
+};
+
+export const extractNumericPercent = (formattedString: string): number => {
+  const numericString = formattedString.replace(/[^\d,]/g, '').replace(',', '.');
+  const res = parseFloat(numericString) || 0;
+  return res > 100 ? 100 : res < 0 ? 0 : res;
 };
 
 export const parseCurrency = (value: string): number => {

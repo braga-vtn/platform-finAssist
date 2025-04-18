@@ -4,11 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { formatDateClassic } from "@/lib/utils";
+import { formatCpfCnpj, formatDateClassic } from "@/lib/utils";
 import { toast } from "sonner";
 import { useUser } from "@/context/user";
 import { getProfile, getUrlUpload, updateProfile } from "@/app/_actions/settings";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { states } from "@/constants/infra";
 
 export const onUpload = async (url: string, file: File) => {
   try {
@@ -33,7 +41,7 @@ const uploadImage = async (file: File, userId: string) => {
   if (!response || !response?.url) {
     throw new Error();
   }
-  
+
   await onUpload(response.url, file);
   return response.url.split('?')[0];
 };
@@ -45,8 +53,17 @@ export const ProfileTabs = () => {
   const [avatarNow, setAvatarNow] = useState('');
   const [fileTemp, setFileTemp] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // Novos estados:
+  const [register, setRegister] = useState('');
+  const [city, setCity] = useState('');
+  const [uf, setUf] = useState('');
+  const [zipcode, setZipcode] = useState('');
+  const [address, setAddress] = useState('');
+  const [neighborhood, setNeighborhood] = useState('');
+
   const { userId } = useUser();
- 
+
   const handleEditClick = useCallback(() => {
     setAvatarNow("");
     setFileTemp(null);
@@ -67,6 +84,12 @@ export const ProfileTabs = () => {
         setName(profileData?.name || '');
         setEmail(profileData?.email || '');
         setCreatedAt(profileData?.createdAt.toDateString() || '');
+        setRegister(profileData?.register || '');
+        setCity(profileData?.city || '');
+        setUf(profileData?.uf || '');
+        setZipcode(profileData?.zipcode || '');
+        setAddress(profileData?.address || '');
+        setNeighborhood(profileData?.neighborhood || '');
       } catch {
         toast('Erro Inesperado', { description: 'Não foi possível buscar os dados do seu perfil, tente novamente mais tarde!' });
       } finally {
@@ -77,7 +100,7 @@ export const ProfileTabs = () => {
     fetchData();
   }, [userId]);
 
-  const onSubmit = async() => {
+  const onSubmit = async () => {
     if (!userId) return;
 
     try {
@@ -87,7 +110,7 @@ export const ProfileTabs = () => {
         setAvatarNow(profileImageID);
       }
 
-      const upt = await updateProfile(profileImageID, name, userId);
+      const upt = await updateProfile(profileImageID, name, register, city, uf, zipcode, address, neighborhood, userId);
       if (!upt) {
         throw new Error();
       }
@@ -150,9 +173,54 @@ export const ProfileTabs = () => {
             <Input defaultValue={formatDateClassic(createdAt)} disabled id="createdAt" />
           </div>
         </div>
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input defaultValue={email} disabled type="email" id="email" />
+        <div className="flex flex-row w-full gap-2">
+          <div className="grid w-1/2 items-center gap-1.5">
+            <Label htmlFor="register">CPF/CNPJ</Label>
+            <Input 
+              id="register" 
+              type="text" 
+              maxLength={18} 
+              value={register}
+              onChange={(e) => setRegister(formatCpfCnpj(e.target.value))} 
+            />
+          </div>
+          <div className="grid w-1/2 items-center gap-1.5">
+            <Label htmlFor="email">Email</Label>
+            <Input defaultValue={email} disabled type="email" id="email" />
+          </div>
+        </div>
+        <div className="flex flex-row w-full gap-2">
+          <div className="grid w-1/3 items-center gap-1.5">
+            <Label htmlFor="city">Cidade</Label>
+            <Input value={city} onChange={(e) => setCity(e.target.value)} type="text" id="city" />
+          </div>
+          <div className="grid w-1/3 items-center gap-1.5">
+            <Label htmlFor="uf">UF</Label>
+            <Select value={uf} onValueChange={(value) => setUf(value)}>
+              <SelectTrigger className="w-full border dark:border-neutral-700 border-neutral-300 bg-neutral-100 dark:bg-neutral-900 shadow-md">
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent className="h-48">
+                {states.map((item) =>
+                  <SelectItem key={`item-${item}`} value={item}>{item}</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid w-1/3 items-center gap-1.5">
+            <Label htmlFor="zipcode">Código postal</Label>
+            <Input value={zipcode} onChange={(e) => setZipcode(e.target.value)} type="number" min={0} max={99999999} id="zipcode" />
+          </div>
+        </div>
+        <div className="flex flex-row w-full gap-2">
+          <div className="grid w-3/4 items-center gap-1.5">
+            <Label htmlFor="address">Endereço</Label>
+            <Input value={address} onChange={(e) => setAddress(e.target.value)} type="text" id="address" />
+          </div>
+          <div className="grid w-1/4 items-center gap-1.5">
+            <Label htmlFor="neighborhood">Setor/bairro</Label>
+            <Input value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} type="text" id="neighborhood" />
+          </div>
         </div>
       </div>
       <div className="flex justify-end mt-5">

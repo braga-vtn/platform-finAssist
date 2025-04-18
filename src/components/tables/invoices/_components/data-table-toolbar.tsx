@@ -2,7 +2,7 @@
 import { Table } from '@tanstack/react-table';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { Invoice } from '@/types/invoice';
+import { Invoice2 } from '@/types/invoice';
 
 import { DataTableExport } from './data-table-export';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
@@ -11,7 +11,7 @@ import { DataTableCreateInvoice } from './data-table-create-invoice';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  onCreateInvoice: (_item: Invoice) => void;
+  onCreateInvoice: (_item: Invoice2) => void;
 }
 
 export function DataTableToolbar<TData>({

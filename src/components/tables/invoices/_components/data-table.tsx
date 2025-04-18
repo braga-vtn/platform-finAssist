@@ -23,7 +23,7 @@ import {
   TableRow,
   TableRowHeader,
 } from '@/components/ui/table';
-import { Invoice } from '@/types/invoice';
+import { Invoice2 } from '@/types/invoice';
 
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
@@ -31,7 +31,7 @@ import { DataTableToolbar } from './data-table-toolbar';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  onCreateInvoice: (_item: Invoice) => void;
+  onCreateInvoice: (_item: Invoice2) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -114,7 +114,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className='cursor-pointer'
+                  className='cursor-default'
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (

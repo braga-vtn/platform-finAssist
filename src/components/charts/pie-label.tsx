@@ -27,13 +27,12 @@ interface Label {
 interface Props {
   title: string;
   label: string;
-  days: number;
   total?: string;
   data: Data[];
   labels: Label[];
 }
 
-export function ChartPieLabel({ title, label, data, labels, days, total }: Props): React.JSX.Element {
+export function ChartPieLabel({ title, label, data, labels, total }: Props): React.JSX.Element {
   const colors = [
     '#a3a3a3',
     '#d4d4d4',
@@ -68,7 +67,7 @@ export function ChartPieLabel({ title, label, data, labels, days, total }: Props
         <div className="flex flex-1 flex-col justify-center gap-1 pl-3 py-2 mt-0.5">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
           <p className="text-xs text-muted-foreground">
-            {days > 1 ? `Período de ${days} dias` : 'Período 1 dia'}
+            Atualmente
           </p>
         </div>
         {total && (

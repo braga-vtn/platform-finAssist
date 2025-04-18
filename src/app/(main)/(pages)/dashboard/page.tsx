@@ -67,7 +67,7 @@ const areaConfig = {
 };
 
 const barStackedConfig = {
-  title: 'Mensagens Enviadas',
+  title: 'Distribuição das Mensagens',
   days: 7,
   icon: SendIcon,
   labels: [
@@ -112,7 +112,7 @@ export default function Dashboard(): JSX.Element {
       </div>
       <div className='flex flex-row justify-between gap-4 w-full'>
         <div className='w-1/3'>
-          <ChartPieLabel title={pieConfig.title} label={pieConfig.label} days={days} total={pieConfig.total} data={pieConfig.data} labels={pieConfig.labels} />
+          <ChartPieLabel title={pieConfig.title} label={pieConfig.label} total={pieConfig.total} data={pieConfig.data} labels={pieConfig.labels} />
         </div>
         <div className='w-2/3'>
           <ChartLineInteractive title={lineConfig.title} subTitle={lineConfig.subTitle} label={lineConfig.label} days={days} total={lineConfig.total} data={lineConfig.data} />

@@ -1,7 +1,8 @@
 'use server';
 import { client } from '@/lib/prisma';
-import { getTeam } from './settings';
 import { Client, UF } from '@/types/client';
+
+import { getTeam } from './settings';
 
 export const getClientPageData = async (userId: string) => {
   try {

@@ -20,10 +20,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn, handleCurrencyChange, parseDate } from "@/lib/utils";
+import { cn, formatCpfCnpj, handleCurrencyChange, parseDate } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { states } from "@/constants/infra";
+import { Controller } from "react-hook-form";
+import { FormLabel } from "@/components/ui/form";
 
 type Team = {
   value: string;
@@ -46,13 +48,28 @@ export function ProfileForm({ form, team, edition = false }: { form: any, team: 
         >
           <Input className="w-full" />
         </FormFildItem>
-        <FormFildItem
-          control={form.control}
+        <Controller
           name="register"
-          label="Cnpj/Cpf"
-        >
-          <Input className="w-full" />
-        </FormFildItem>
+          control={form.control}
+          render={({ field }) => (
+            <span className="w-full">
+              <span className="flex flex-row items-center">
+                <FormLabel>Cnpj/Cpf</FormLabel>
+              </span>
+              <Input
+                {...field}
+                className="w-full mt-2"
+                maxLength={18}
+                onChange={e => {
+                  const raw = e.target.value;
+                  const formatted = formatCpfCnpj(raw);
+                  field.onChange(formatted);
+                }}
+                value={field.value}
+              />
+            </span>
+          )}
+        />
         <FormFildItem
           control={form.control}
           name="identifier"

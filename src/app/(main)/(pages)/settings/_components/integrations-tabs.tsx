@@ -26,6 +26,7 @@ interface WhatsappFormData {
   whatsappBusinessId: string;
   systemAccessToken: string;
   phoneNumberId: string;
+  templateName: string;
 }
 
 interface EmailFormData {
@@ -99,13 +100,26 @@ export const WhatsappCard = ({ data, onChange }: WhatsappCardProps) => {
   return (
     <div className="space-y-4 w-full mt-4">
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="whatsapp-business-id">WhatsApp Business ID</Label>
-        <Input
-          id="whatsapp-business-id"
-          type="text"
-          value={data.whatsappBusinessId}
-          onChange={(e) => onChange("whatsappBusinessId", e.target.value)}
-        />
+        <div className="flex flex-row w-full gap-2">
+          <div className="grid w-2/3 items-center gap-1.5">
+            <Label htmlFor="whatsapp-business-id">WhatsApp Business ID</Label>
+            <Input
+              id="whatsapp-business-id"
+              type="text"
+              value={data.whatsappBusinessId}
+              onChange={(e) => onChange("whatsappBusinessId", e.target.value)}
+            />
+          </div>
+          <div className="grid w-1/3 items-center gap-1.5">
+            <Label htmlFor="phone-number-id">Template</Label>
+            <Input
+              id="template-name"
+              type="text"
+              value={data.templateName}
+              onChange={(e) => onChange("templateName", e.target.value)}
+            />
+          </div>
+        </div>
       </div>
       <div className="flex flex-row w-full gap-2">
         <div className="grid w-1/2 items-center gap-1.5">
@@ -256,6 +270,7 @@ export const IntegrationsTabs = () => {
       whatsappBusinessId: "",
       systemAccessToken: "",
       phoneNumberId: "",
+      templateName: "",
     },
     email: {
       from: "",

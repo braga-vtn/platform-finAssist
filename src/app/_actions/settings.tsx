@@ -14,6 +14,12 @@ export const getProfile = async (userId: string) => {
         name: true,
         email: true,
         createdAt: true,
+        register: true,
+        city: true,
+        uf: true,
+        zipcode: true,
+        address: true,
+        neighborhood: true,
       },
     });
 
@@ -23,6 +29,12 @@ export const getProfile = async (userId: string) => {
         name: user.name,
         email: user.email,
         createdAt: user.createdAt,
+        register: user.register,
+        city: user.city,
+        uf: user.uf,
+        zipcode: user.zipcode,
+        address: user.address,
+        neighborhood: user.neighborhood,
       };
     }
 
@@ -53,7 +65,7 @@ export const getUrlUpload = async (fileType: string, userId: string) => {
   }
 };
 
-export const updateProfile = async (profileImageID: string, name: string, userId: string) => {
+export const updateProfile = async (profileImageID: string, name: string, register: string, city: string, uf: string, zipcode: string, address: string, neighborhood: string, userId: string) => {
   try {
     await client.user.update({
       where: {
@@ -62,6 +74,12 @@ export const updateProfile = async (profileImageID: string, name: string, userId
       data: {
         avatar: profileImageID,
         name,
+        register,
+        city,
+        uf,
+        zipcode,
+        address,
+        neighborhood,
       },
     });
 
@@ -212,6 +230,15 @@ export const deleteTeam = async (email: string, userId: string) => {
       },
     });
 
+    await client.clients.updateMany({
+      where: {
+        memberId: member.clerkId,
+      },
+      data: {
+        memberId: userId,
+      }
+    });
+
     return true;
   } catch {
     return false;
@@ -223,12 +250,14 @@ interface InterConfig {
   secretId: string;
   cert: string;
   key: string;
+  accessToken?: string;
 }
 
 interface WhatsappConfig {
   whatsappBusinessId: string;
   systemAccessToken: string;
   phoneNumberId: string;
+  templateName: string;
 }
 
 interface EmailConfig {
@@ -261,11 +290,13 @@ export const getIntegrations = async (userId: string): Promise<IntegrationConfig
         secretId: "",
         cert: "",
         key: "",
+        accessToken: ""
       },
       whatsapp: {
         whatsappBusinessId: "",
         systemAccessToken: "",
         phoneNumberId: "",
+        templateName: "",
       },
       email: {
         from: "",

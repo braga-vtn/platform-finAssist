@@ -16,6 +16,7 @@ export const taskSchema = z.object({
   status: z.string(), // paid, pending or canceled
   value: z.number(),
   fileUrl: z.string().optional(),
+  pixCode: z.string().optional(),
   dueAt: z.string(),
   createdAt: z.string(),
 });
@@ -142,7 +143,18 @@ export const createColumns = (): ColumnDef<Task>[] => [
     enableHiding: false,
   },
   {
+    accessorKey: 'pixCode',
+    header: () => (
+      null
+    ),
+    cell: () => (
+      null
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions id={row.getValue('id')} fileUrl={row.getValue('fileUrl')} />,
+    cell: ({ row }) => <DataTableRowActions id={row.getValue('id')} fileUrl={row.getValue('fileUrl')} pixCode={row.getValue('pixCode')} />,
   },
 ];

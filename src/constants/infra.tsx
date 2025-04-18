@@ -54,7 +54,7 @@ export const stepsInvoice = [
   },
   {
     step: 3,
-    title: "Juros, Multas e Desconto",
+    title: "Mora, Multas e Desconto",
   },
   {
     step: 4,

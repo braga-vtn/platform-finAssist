@@ -1,8 +1,8 @@
 
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
-import { Invoice } from '@/types/invoice';
+import { Invoice2 } from '@/types/invoice';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -24,7 +24,7 @@ import {
   StepperTrigger,
 } from "@/components/ui/stepper";
 import { stepsInvoice } from '@/constants/infra';
-import { cn, handleCurrencyChange, parseDate } from "@/lib/utils";
+import { cn, extractNumericPercent, handleCurrencyChange, parseDate } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -38,7 +38,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Clients } from '@/constants/faker';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -47,29 +46,64 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from "@/components/ui/calendar";
 import { format, isBefore, startOfToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { v4 as uuid } from 'uuid';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useUser } from '@/context/user';
+import { Client2 } from '@/types/client';
+import { getClients } from '@/app/_actions/invoices';
 
 interface CreateInvoice {
-  onCreateInvoice: (_item: Invoice) => void;
+  onCreateInvoice: (_item: Invoice2) => void;
 }
 
 export function DataTableCreateInvoice({
   onCreateInvoice,
 }: CreateInvoice): React.JSX.Element {
   const [step, setStep] = useState<number>(1);
-  const [value, setValue] = useState(""); // identifier
+  const [value, setValue] = useState("");
   const [date, setDate] = useState<Date>(new Date());
   const [formattedValue, setFormattedValue] = useState('0.00');
   const [fees, setFees] = useState('0');
   const [fine, setFine] = useState('0');
   const [discount, setDiscount] = useState('0');
   const [observation, setObservation] = useState<string>('');
+  const [clients, setClients] = useState<Client2[]>([]);
+  const { userId } = useUser();
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchData = async () => {
+      try {
+        const clients = await getClients(userId) || [];
+
+        const now = new Date();
+        const adjustedClients = clients.map(client => {
+          const dueDate = new Date(client.dueAt);
+          if (dueDate < now) {
+            const newDue = new Date();
+            newDue.setDate(newDue.getDate() + 3);
+
+            return {
+              ...client,
+              dueAt: newDue.toISOString(),
+            };
+          }
+          return client;
+        });
+
+        setClients(adjustedClients);
+      } catch {
+        toast('Erro Inesperado', {description:'Não foi possível buscar os clientes, tente novamente mais tarde!'});
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
   const handleReset = () => {
     setStep(1);
@@ -86,16 +120,15 @@ export function DataTableCreateInvoice({
     const numericValue = parseFloat(formattedValue.replace(/\./g, '').replace(',', '.')) * 100;
 
     const newInvoice = {
-      id: uuid(),
-      externalId: uuid(),
       identifier: value,
-      status: 'pending',
       value: numericValue,
-      fileUrl: 'https://file.com/1',
+      discount: extractNumericPercent(discount),
+      fees: extractNumericPercent(fees),
+      fine: extractNumericPercent(fine),
+      observation,
       dueAt: date.toISOString(),
-      createdAt: new Date().toISOString()
     };
-  
+
     onCreateInvoice(newInvoice);
     handleReset();
   }
@@ -114,7 +147,7 @@ export function DataTableCreateInvoice({
   }
 
   const handleIdentifierChange = (value: string) => {
-    const client = Clients.find((client) => client.identifier === value);
+    const client = clients.find((client) => client.identifier === value);
 
     setValue(value);
     setDate(client && parseDate(client.dueAt) || new Date());
@@ -146,7 +179,7 @@ export function DataTableCreateInvoice({
     switch (step) {
     case 0:
     case 1:
-      return <ClientSelect disabled={false} value={value} onSetValue={handleIdentifierChange} />;
+      return <ClientSelect clients={clients} disabled={false} value={value} onSetValue={handleIdentifierChange} />;
     case 2:
       return <CollectionData disabled={false} date={date} formattedValue={formattedValue} observation={observation} onDateChange={setDate} onValueChange={setFormattedValue} onObservationChange={setObservation} />;
     case 3:
@@ -158,7 +191,7 @@ export function DataTableCreateInvoice({
             <AccordionItem value="item-1">
               <AccordionTrigger>Dados do Cliente</AccordionTrigger>
               <AccordionContent>
-                <ClientSelect disabled value={value} onSetValue={handleIdentifierChange} />
+                <ClientSelect clients={clients} disabled value={value} onSetValue={handleIdentifierChange} />
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
@@ -168,7 +201,7 @@ export function DataTableCreateInvoice({
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
-              <AccordionTrigger>Juros, Multas e Desconto</AccordionTrigger>
+              <AccordionTrigger>Mora, Multas e Desconto</AccordionTrigger>
               <AccordionContent>
                 <OthersValues disabled fees={fees} fine={fine} discount={discount} onOthersValuesChange={handleOthersValuesChange} />
               </AccordionContent>
@@ -278,15 +311,16 @@ function StepperInvoice({ step, children }: PropsStepper) {
 }
 
 type ClientSelectProps = {
+  clients: Client2[];
   value: string;
   disabled: boolean;
   onSetValue: (_value: string) => void;
 }
 
-function ClientSelect({ value, disabled, onSetValue }: ClientSelectProps) {
+function ClientSelect({ clients, value, disabled, onSetValue }: ClientSelectProps) {
   const [open, setOpen] = useState(false);
 
-  const client = Clients.find((client) => client.identifier === value);
+  const client = clients.find((client) => client.identifier === value);
 
   return (
     <div className="space-y-8 text-center w-full">
@@ -297,12 +331,12 @@ function ClientSelect({ value, disabled, onSetValue }: ClientSelectProps) {
             role="combobox"
             disabled={disabled}
             aria-expanded={open}
-            className="w-[300px] justify-between"
+            className="w-[300px] justify-between hover:bg-neutral-100 border-neutral-300 dark:hover:bg-neutral-900 dark:border-neutral-700"
           >
             {value ? (
               <span className="flex items-center gap-2">
                 <Badge variant="style">{value}</Badge>
-                {Clients.find((client) => client.identifier === value)?.name}
+                {clients.find((client) => client.identifier === value)?.name}
               </span>
             ) : (
               "Selecione o cliente..."
@@ -316,7 +350,7 @@ function ClientSelect({ value, disabled, onSetValue }: ClientSelectProps) {
             <CommandList>
               <CommandEmpty>Nenhum cliente encontrado</CommandEmpty>
               <CommandGroup>
-                {Clients.map((client) => (
+                {clients.map((client) => (
                   <CommandItem
                     key={client.identifier}
                     value={client.identifier}
@@ -348,29 +382,8 @@ function ClientSelect({ value, disabled, onSetValue }: ClientSelectProps) {
   );
 }
 
-type ClientProps = {
-  id: number;
-  identifier: string;
-  name: string;
-  register: string;
-  city: string;
-  uf: string;
-  zipcode: string;
-  neighborhood: string;
-  address?: string | undefined;
-  value: string;
-  email?: string | undefined;
-  phone?: string | undefined;
-  SendByWhatsapp: boolean;
-  SendByEmail: boolean;
-  memberId: string;
-  observation?: string | undefined | null;
-  dueAt: string;
-  createdAt: string;
-}
-
 type CardClientProps = {
-  client: ClientProps;
+  client: Client2;
   disabled: boolean;
 }
 
@@ -507,7 +520,7 @@ type OthersValuesProps = {
 
 function OthersValues({ fees, fine, discount, disabled, onOthersValuesChange }: OthersValuesProps) {
   const OthersConfig = [
-    { id: 'fees', title: 'Juros por Dia', value: fees },
+    { id: 'fees', title: 'Mora mensal', value: fees },
     { id: 'fine', title: 'Multa', value: fine },
     { id: 'discount', title: 'Desconto', value: discount },
   ];

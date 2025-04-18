@@ -24,6 +24,12 @@ model User {
   email        String         @unique
   password     String
   parent       String?
+  register     String?
+  address      String?
+  neighborhood String?
+  city         String?
+  uf           String?
+  zipcode      String?
   parentId     String         @unique @default(uuid())
   updatedAt    DateTime       @default(now()) @updatedAt
   createdAt    DateTime       @default(now())
@@ -36,7 +42,7 @@ model User {
 }
 
 model Clients {
-  id             Int      @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   identifier     String // Número de Cliente - manual
   name           String // Nome da Empresa
   register       String // CNPJ/CPF
@@ -48,15 +54,16 @@ model Clients {
   value          Int // Valor das parcelas
   email          String
   phone          String
-  SendByWhatsapp Boolean  @default(true)
-  SendByEmail    Boolean  @default(true)
+  SendByWhatsapp Boolean    @default(true)
+  SendByEmail    Boolean    @default(true)
   observation    String?
   memberId       String // clerkId de quem criou o cliente
   dueAt          DateTime
-  updatedAt      DateTime @default(now()) @updatedAt
-  createdAt      DateTime @default(now())
+  updatedAt      DateTime   @default(now()) @updatedAt
+  createdAt      DateTime   @default(now())
   userId         String
-  User           User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  User           User       @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  Invoices       Invoices[]
 }
 
 model Team {
@@ -106,11 +113,14 @@ model Invoices {
   value      Int
   payload    Json
   fileUrl    String?
+  pixCode    String?
   dueAt      DateTime
   updatedAt  DateTime       @default(now()) @updatedAt
   createdAt  DateTime       @default(now())
   userId     String
+  clientId   Int
   User       User           @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  Clients    Clients        @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 enum IntegrationType {
@@ -123,6 +133,7 @@ model Integrations {
   id        Int             @id @default(autoincrement())
   type      IntegrationType
   config    Json
+  expiresAt DateTime?
   updatedAt DateTime        @default(now()) @updatedAt
   createdAt DateTime        @default(now())
   userId    String

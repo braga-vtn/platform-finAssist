@@ -8,31 +8,45 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUser } from "@/context/user";
+import { sendNotification } from "@/app/_actions/invoices";
 
 interface Props {
   id: string;
   fileUrl: string;
+  pixCode: string;
 }
 
-export function DataTableRowActions({ id, fileUrl }: Props) {
+export function DataTableRowActions({ id, fileUrl, pixCode }: Props) {
+  const { userId } = useUser();
 
-  const handleNotification = () => {
-    if (!id) return;
-    
-    toast('Notificação Enviada', { description: "Foi enviado uma cópia do boleto para esse cliente." });
+  const handleCopyPixCode = async () => {
+    if (!pixCode) return;
+
+    try {
+      await navigator.clipboard.writeText(pixCode);
+      toast('Código Copiado', { description: 'A chave Pix foi copiada para sua área de transferência!' });
+    } catch {
+      toast('Erro ao Copiar', { description: 'Não foi possível copiar o código Pix.' });
+    }
+  };
+
+  const handleNotification = async () => {
+    if (!id || !userId) return;
+
+    try {
+      await sendNotification(id, userId);
+      toast('Notificação Enviada', { description: 'A notificação foi reenviada para esse cliente.' });
+    } catch {
+      toast('Erro Inesperado', { description: 'Não foi possível reenviar a notificação para esse cliente.' });
+    }
   };
 
   const handleDownload = () => {
     if (!fileUrl) return;
 
-    const link = document.createElement('a');
-    link.href = fileUrl;
-    link.download = '';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    toast('Arquivo Baixado', { description: 'O arquivo em pdf do boleto foi baixado. Verifique os downloads em seu computador.' });
+    window.open(fileUrl, '_blank');
+    toast('Arquivo Aberto', { description: 'O arquivo em PDF foi aberto em uma nova aba.' });
   };
 
   return (
@@ -48,6 +62,7 @@ export function DataTableRowActions({ id, fileUrl }: Props) {
       <DropdownMenuContent align="end" className="w-full">
         <DropdownMenuItem disabled={!fileUrl} onClick={handleDownload}>Baixar</DropdownMenuItem>
         <DropdownMenuItem disabled={!id} onClick={handleNotification}>Reenviar Notificação</DropdownMenuItem>
+        <DropdownMenuItem disabled={!pixCode} onClick={handleCopyPixCode}>Copiar Pix</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
