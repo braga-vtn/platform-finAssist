@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
         { status: 'error', message: 'Refresh token não informado.' },
         { status: 400 }
       );
-    }
+    } 
 
     const backendResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL!}/v1/auth/refresh-tokens`, {
       method: 'GET',
