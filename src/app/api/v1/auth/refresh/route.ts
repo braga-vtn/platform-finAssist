@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const backendResponse = await fetch(`https://finassist-1ce8.onrender.com/v1/auth/refresh-tokens`, {
+    const backendResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL!}/v1/auth/refresh-tokens`, {
       method: 'GET',
       headers: { 
         'Content-Type': 'application/json',
