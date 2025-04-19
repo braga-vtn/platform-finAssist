@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log('pegando refresh', process.env.NEXT_PUBLIC_BACKEND_URL!);
     const backendResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL!}/v1/auth/refresh-tokens`, {
       method: 'GET',
       headers: { 
