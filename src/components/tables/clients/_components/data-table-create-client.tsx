@@ -81,6 +81,7 @@ export function DataTableCreateClient({
 
   function onSubmit() {
     const values = form.getValues();
+
     if (!values.name || !values.register || !values.identifier) {
       toast('Formulário Incompleto', { description: 'Você não preencheu todos os campos obrigatórios do formulário!' });
       return;

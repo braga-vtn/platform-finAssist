@@ -244,7 +244,7 @@ const ChartTooltipContent = React.forwardRef<
                       {item.value && (
                         <span className="font-mono font-medium tabular-nums text-foreground">
                           {isCurrency ?
-                            `R$ ${item.value.toLocaleString('pt-BR', {
+                            `R$ ${((item.value as number)/100).toLocaleString('pt-BR', {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
                             })}`

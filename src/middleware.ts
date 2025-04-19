@@ -36,7 +36,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse<unknown
     return NextResponse.next();
   }
 
-  // Login automático:
+  // Login automático: 
   // if (pathname.startsWith('/auth')) {
   //   if (accessToken || refreshToken) {
   //     if (accessToken && await validateAccessToken(accessToken)) {

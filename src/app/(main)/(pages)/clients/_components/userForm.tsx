@@ -20,12 +20,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn, formatCpfCnpj, handleCurrencyChange, parseDate } from "@/lib/utils";
+import { cn, formatCpfCnpj, handleCurrencyChange } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { states } from "@/constants/infra";
 import { Controller } from "react-hook-form";
-import { FormLabel } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 type Team = {
   value: string;
@@ -35,7 +35,6 @@ type Team = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ProfileForm({ form, team, edition = false }: { form: any, team: Team[], edition?: boolean }) {
   const id = useId();
-  const [date, setDate] = useState<Date>(parseDate(form.getValues('dueAt')));
   const [formattedValue, setFormattedValue] = useState(handleCurrencyChange(form.getValues('value')) || '');
 
   return (
@@ -129,36 +128,45 @@ export function ProfileForm({ form, team, edition = false }: { form: any, team: 
           </FormFildItem>
         </div>
         <div className="flex flex-row items-center gap-2 w-1/2">
-          <FormFildItem
+          <FormField
             control={form.control}
             name="dueAt"
-            label="Data de Pagamento"
-          >
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"style2"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon />
-                  {date ? format(date, "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(day) => setDate(day ?? new Date())}
-                  locale={ptBR}
-                  initialFocus
-                  disabled={(day) => isBefore(day, startOfToday())}
-                />
-              </PopoverContent>
-            </Popover>
-          </FormFildItem>
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Data de Pagamento</FormLabel>
+                <FormControl>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"style2"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon />
+                        {field.value ? format(field.value, "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value ? new Date(field.value) : undefined}
+                        onSelect={(day) => {
+                          if (day) {
+                            field.onChange(day.toISOString());
+                          }
+                        }}
+                        locale={ptBR}
+                        initialFocus
+                        disabled={(day) => isBefore(day, startOfToday())}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <FormFildItem
             control={form.control}
             name="value"

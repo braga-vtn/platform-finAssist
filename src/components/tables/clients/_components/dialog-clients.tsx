@@ -21,6 +21,7 @@ import { Trash2 } from 'lucide-react';
 import { Client, Client2 } from '@/types/client';
 import { states } from '@/constants/infra';
 import { Team } from '@/types/team';
+import { extractNumericValue } from '@/lib/utils';
 
 const formSchema = z.object({
   id: z.number().optional(),
@@ -33,7 +34,7 @@ const formSchema = z.object({
   neighborhood: z.string().min(1, { message: "" }),
   address: z.string().optional(),
   dueAt: z.string().min(1, { message: "" }),
-  value: z.number().default(0),
+  value: z.string(),
   email: z.string().optional(),
   phone: z.string().optional(),
   SendByWhatsapp: z.boolean().default(false),
@@ -67,7 +68,7 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
       neighborhood: "",
       address: '',
       dueAt: '',
-      value: 0,
+      value: '0',
       email: '',
       phone: '',
       SendByWhatsapp: false,
@@ -91,7 +92,7 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
         neighborhood: item.neighborhood,
         address: item.address ?? '',
         dueAt: item.dueAt,
-        value: item.value,
+        value: String(item.value),
         email: item.email ?? '',
         phone: item.phone ?? '',
         SendByWhatsapp: item.SendByWhatsapp,
@@ -111,7 +112,8 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
       return;
     }
 
-    onUpdateClient(values);
+    const data = { ...values, value: extractNumericValue(values.value) };
+    onUpdateClient(data);
   }
 
   const handleDeleteClient = (id: number | null) => {

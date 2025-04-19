@@ -80,8 +80,8 @@ export const formatCpfCnpj = (value: string) => {
 };
 
 export const extractNumericValue = (formattedString: string): number => {
-  const numericString = formattedString.replace(/[^\d,]/g, '').replace(',', '.');
-  return parseFloat(numericString)*1000 || 0;
+  const numericString = formattedString.replace(/[^\d,]/g, '').replace(',', '');
+  return parseInt(numericString) || 0;
 };
 
 export const extractNumericPercent = (formattedString: string): number => {

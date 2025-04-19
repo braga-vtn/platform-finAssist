@@ -148,6 +148,7 @@ enum MessageType {
 model Messages {
   id        Int         @id @default(autoincrement())
   type      MessageType
+  invoiceId String
   payload   Json
   createdAt DateTime    @default(now())
   userId    String
