@@ -7,29 +7,18 @@ import { ChartLineInteractive } from '@/components/charts/line-interactive';
 import { ChartPieLabel } from '@/components/charts/pie-label';
 import { calculateDateDifference, formatDateRange, getDefaultDateRange } from '@/lib/utils';
 import { ReceiptText, Send, SendIcon, Users, Wallet } from 'lucide-react';
-import { JSX, useEffect, useState } from 'react';
-import { team } from '@/constants/faker';
+import { JSX, useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { useUser } from '@/context/user';
+import { Spinner } from '@/components/ui/spinner';
+import { getMembers, insightsData } from '@/app/_actions/dashboard';
+import { InsightsProps, Member } from '@/types/dashboard';
 
 import { MemberFilter } from './_components/member-filter';
-
-const ChartCards = [
-  { title: 'Novos Clientes', icon: Users, value: '1.000', days: 7 },
-  { title: 'Boletos Gerados', icon: ReceiptText, value: '49', days: 7 },
-  { title: 'Mensagens Enviadas', icon: Send, value: '831', days: 7 },
-  { title: 'Faturamento Presumido', icon: Wallet, value: 'R$ 4.389,80', days: 7 },
-];
 
 const pieConfig = {
   title: 'Clientes da Equipe',
   label: 'Equipe',
-  days: 7,
-  total: '39',
-  data: [
-    { key: 'member1', value: 10 },
-    { key: 'member2', value: 4 },
-    { key: 'member3', value: 11 },
-    { key: 'member4', value: 14 },
-  ],
   labels: [
     { config: 'member1', label: 'Matheus Braga' },
     { config: 'member2', label: 'Sérgio' },
@@ -42,50 +31,41 @@ const lineConfig = {
   title: 'Boletos',
   subTitle: '',
   label: 'Quantidade',
-  days: 7,
-  total: '43',
-  data: [
-    { date: '2025-03-01', value: 10 },
-    { date: '2025-03-02', value: 4 },
-    { date: '2025-03-03', value: 11 },
-    { date: '2025-03-04', value: 14 },
-    { date: '2025-03-05', value: 3 },
-  ],
 };
 
 const areaConfig = {
   title: 'Previsão de Faturamento',
-  label: 'Valor',
-  days: 7,
-  data: [
-    { date: '2025-03-01', value: 10 },
-    { date: '2025-03-02', value: 4 },
-    { date: '2025-03-03', value: 11 },
-    { date: '2025-03-04', value: 14 },
-    { date: '2025-03-05', value: 3 },
-  ],
+  label: 'Previsão',
 };
 
 const barStackedConfig = {
   title: 'Distribuição das Mensagens',
-  days: 7,
   icon: SendIcon,
   labels: [
-    { config: 'value1', label: 'Email' },
-    { config: 'value2', label: 'WhatsApp' },
-  ],
-  data: [
-    { date: '2025-03-01', value1: 10, value2: 12 },
-    { date: '2025-03-02', value1: 3, value2: 18 },
-    { date: '2025-03-03', value1: 8, value2: 14 },
-    { date: '2025-03-04', value1: 13, value2: 5 },
-    { date: '2025-03-05', value1: 21, value2: 9 },
-  ],
+    { config: 'email', label: 'Email' },
+    { config: 'whatsapp', label: 'WhatsApp' },
+  ]
+};
+
+const insightsDefault = {
+  newClients: { value: 0 },
+  invoicesGenerated: { value: 0 },
+  messagesSended: { value: 0 },
+  presumedRevenue: { value: 0 },
+  teamClients: [],
+  invoices: [],
+  forecastRevenue: [],
+  distributionMessages: [],
 };
 
 export default function Dashboard(): JSX.Element {
   const [itemsSelected, setItemsSelected] = useState<string[]>([]);
+  const [team, setTeam] = useState<Member[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [insights, setInsights] = useState<InsightsProps>(insightsDefault);
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date; fromFormatted?: string; toFormatted?: string }>(getDefaultDateRange());
+  const { userId } = useUser();
+
   const days = calculateDateDifference(dateRange.from, dateRange.to);
 
   const handleDateChange = (range: { from?: Date; to?: Date }) => {
@@ -93,12 +73,83 @@ export default function Dashboard(): JSX.Element {
     setDateRange(formattedRange);
   };
 
-  useEffect(() => {
-    if (dateRange.from && dateRange.to) {
+  const getFormattedDateRange = useCallback(() => {
+    const today = new Date();
+    const defaultEnd = today.toISOString().split('T')[0];
+
+    const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const defaultStart = sevenDaysAgo.toISOString().split('T')[0];
+
+    const start = dateRange.fromFormatted?.split('T')[0] || defaultStart;
+    const end = dateRange.toFormatted?.split('T')[0] || defaultEnd;
+    
+    return { start, end };
+  }, [dateRange.fromFormatted, dateRange.toFormatted]);
+
+  const fetchInsights = useCallback(async () => {
+    if (!userId) return;
+    
+    const dates = getFormattedDateRange();
+    const members = itemsSelected || [];
+
+    if (!dates.start || !dates.end) {
+      toast('Erro Inesperado', { description: 'Datas inválidas para buscar métricas!' });
       return;
     }
-  }, [dateRange]);
 
+    try {
+      setLoading(true);
+      const data = await insightsData(dates.start, dates.end, members, userId);
+      if (data) {
+        setInsights(data);
+      }
+    } catch {
+      toast('Erro Inesperado', { description: 'Não foi possível buscar as métricas, tente novamente mais tarde!' });
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, itemsSelected, getFormattedDateRange]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchTeamMembers = async () => {
+      try {
+        setLoading(true);
+        const members = await getMembers(userId);
+        if (members) {
+          setItemsSelected(members.map((item) => item.value));
+          setTeam(members);
+        }
+      } catch {
+        toast('Erro Inesperado', { description: 'Não foi possível buscar os membros da equipe!' });
+      }
+    };
+
+    fetchTeamMembers();
+  }, [userId]);
+
+  useEffect(() => {
+    if (team.length > 0 && userId) {
+      fetchInsights();
+    }
+  }, [dateRange, fetchInsights, team.length, userId]);
+
+  const ChartCards = [
+    { type: 'number', title: 'Novos Clientes', icon: Users, value: insights.newClients.value },
+    { type: 'number', title: 'Boletos Gerados', icon: ReceiptText, value: insights.invoicesGenerated.value },
+    { type: 'number', title: 'Mensagens Enviadas', icon: Send, value: insights.messagesSended.value },
+    { type: 'money', title: 'Faturamento Presumido', icon: Wallet, value: insights.presumedRevenue.value },
+  ];
+
+  if (loading && team.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-[calc(90vh-50px)]">
+        <Spinner />
+      </div>
+    );
+  }
+ 
   return (
     <div className='space-y-4'>
       <div className='flex justify-end mb-4 gap-2'>
@@ -107,23 +158,23 @@ export default function Dashboard(): JSX.Element {
       </div>
       <div className='grid grid-cols-4 gap-4'>
         {ChartCards.map((item) =>
-          <ChartCard key={`card-${item.title}`} title={item.title} Icon={item.icon} value={item.value} days={days} />
+          <ChartCard key={`card-${item.title}`} type={item.type} title={item.title} Icon={item.icon} value={item.value} days={days} />
         )}
       </div>
       <div className='flex flex-row justify-between gap-4 w-full'>
         <div className='w-1/3'>
-          <ChartPieLabel title={pieConfig.title} label={pieConfig.label} total={pieConfig.total} data={pieConfig.data} labels={pieConfig.labels} />
+          <ChartPieLabel team={team} title={pieConfig.title} label={pieConfig.label} days={days} data={insights.teamClients} labels={pieConfig.labels} />
         </div>
         <div className='w-2/3'>
-          <ChartLineInteractive title={lineConfig.title} subTitle={lineConfig.subTitle} label={lineConfig.label} days={days} total={lineConfig.total} data={lineConfig.data} />
+          <ChartLineInteractive title={lineConfig.title} subTitle={lineConfig.subTitle} label={lineConfig.label} days={days} total={insights.invoicesGenerated.value} data={insights.invoices} />
         </div>
       </div>
       <div className='flex flex-row justify-between gap-4 w-full'>
         <div className='w-1/2'>
-          <ChartAreaInteractive title={areaConfig.title} label={areaConfig.label} days={days} data={areaConfig.data} />
+          <ChartAreaInteractive title={areaConfig.title} label={areaConfig.label} data={insights.forecastRevenue} />
         </div>
         <div className='w-1/2'>
-          <ChartBarStacked title={barStackedConfig.title} days={days} Icon={barStackedConfig.icon} labels={barStackedConfig.labels} data={barStackedConfig.data} />
+          <ChartBarStacked title={barStackedConfig.title} days={days} Icon={barStackedConfig.icon} labels={barStackedConfig.labels} data={insights.distributionMessages} />
         </div>
       </div>
     </div>

@@ -109,7 +109,6 @@ const ChartTooltipContent = React.forwardRef<
   React.ComponentProps<'div'> & {
     hideLabel?: boolean
     hideIndicator?: boolean
-    isPercent?: boolean
     isCurrency?: boolean
     indicator?: 'line' | 'dot' | 'dashed'
     nameKey?: string
@@ -122,7 +121,6 @@ const ChartTooltipContent = React.forwardRef<
       payload,
       className,
       indicator = 'dot',
-      isPercent = false,
       isCurrency = false,
       hideLabel = false,
       hideIndicator = false,
@@ -245,10 +243,14 @@ const ChartTooltipContent = React.forwardRef<
                       </div>
                       {item.value && (
                         <span className="font-mono font-medium tabular-nums text-foreground">
-                          {isCurrency && typeof item.value === 'number'
-                            ? (item.value / 100).toLocaleString()
-                            : item.value?.toLocaleString()}
-                          {isPercent && <span className="text-muted-foreground ml-0.5">%</span>}
+                          {isCurrency ?
+                            `R$ ${item.value.toLocaleString('pt-BR', {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}`
+                            :
+                            item.value.toLocaleString('pt-BR')
+                          }
                         </span>
                       )}
                     </div>

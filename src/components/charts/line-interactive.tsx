@@ -17,7 +17,7 @@ import {
 
 type Data = {
   date: string;
-  value: number | string;
+  value: number;
 }
 
 interface Props {
@@ -53,7 +53,7 @@ export function ChartLineInteractive({ title, subTitle, data, days, label, total
             </p>}
         </div>
         {(total || total === 0) &&
-          <div className="flex flex-col justify-center gap-1 text-center border-l border-t-0 px-8 py-2">
+          <div className="flex flex-col justify-center gap-1 text-center border-l border-t-0 dark:border-neutral-700 px-8 py-2">
             <span className="text-xs text-muted-foreground">
               Total
             </span>
@@ -83,28 +83,29 @@ export function ChartLineInteractive({ title, subTitle, data, days, label, total
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                if (typeof value !== 'string' || !value.includes('-')) return '';
-                const [year, month, day] = value.split('-');
-                const date = new Date(Number(year), Number(month) - 1, Number(day));
+                const date = new Date(value);
+                if (isNaN(date.getTime())) return '';
                 return date.toLocaleDateString('pt-BR', {
                   month: 'short',
                   day: 'numeric',
+                  timeZone: 'UTC',
                 });
               }}
             />
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  className="w-[150px]"
+                  className='w-48'
+                  hideIndicator
                   nameKey="title"
                   indicator="dot"
                   labelFormatter={(value) => {
-                    if (typeof value !== 'string' || !value.includes('-')) return '';
-                    const [year, month, day] = value.split('-');
-                    const date = new Date(Number(year), Number(month) - 1, Number(day));
+                    const date = new Date(value);
+                    if (isNaN(date.getTime())) return '';
                     return date.toLocaleDateString('pt-BR', {
                       month: 'short',
                       day: 'numeric',
+                      timeZone: 'UTC',
                     });
                   }}
                 />
@@ -112,7 +113,7 @@ export function ChartLineInteractive({ title, subTitle, data, days, label, total
             />
             <Line
               dataKey='value'
-              type="natural"
+              type="monotoneX"
               strokeWidth={1.5}
               stroke='CurrentColor'
               dot={false}

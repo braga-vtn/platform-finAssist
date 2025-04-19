@@ -16,8 +16,8 @@ import {
 
 interface Data {
   date: string;
-  value1: number;
-  value2: number;
+  whatsapp: number;
+  email: number;
 }
 
 interface Label {
@@ -36,8 +36,8 @@ interface Props {
 export function ChartBarStacked({ title, Icon, data, days, labels }: Props): React.JSX.Element {
 
   const colorMap = {
-    value1: '#a3a3a3',
-    value2: '#525252',
+    whatsapp: '#a3a3a3',
+    email: '#525252',
   };
 
   const chartConfig = labels.reduce((acc, { config, label }) => {
@@ -80,40 +80,43 @@ export function ChartBarStacked({ title, Icon, data, days, labels }: Props): Rea
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const [year, month, day] = value.split('-');
-                const date = new Date(year, month - 1, day);
+                const date = new Date(value);
+                if (isNaN(date.getTime())) return '';
                 return date.toLocaleDateString('pt-BR', {
                   month: 'short',
                   day: 'numeric',
+                  timeZone: 'UTC',
                 });
               }}
             />
             <ChartTooltip cursor={false}
               content={
                 <ChartTooltipContent
+                  hideIndicator
                   className="w-[150px]"
                   indicator="dot"
                   labelFormatter={(value) => {
-                    const [year, month, day] = value.split('-');
-                    const date = new Date(year, month - 1, day);
+                    const date = new Date(value);
+                    if (isNaN(date.getTime())) return '';
                     return date.toLocaleDateString('pt-BR', {
                       month: 'short',
                       day: 'numeric',
+                      timeZone: 'UTC',
                     });
                   }}
                 />
               }
             />
             <Bar
-              dataKey="value1"
+              dataKey="whatsapp"
               stackId="bar-stacked-0901848530"
-              fill="var(--color-value1)"
+              fill="var(--color-whatsapp)"
               radius={[0, 0, 4, 4]}
             />
             <Bar
-              dataKey="value2"
+              dataKey="email"
               stackId="bar-stacked-041098181"
-              fill="var(--color-value2)"
+              fill="var(--color-email)"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

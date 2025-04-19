@@ -123,6 +123,10 @@ export function formatRegister(text: string) {
   return text;
 }
 
+export const formatNumber = (value: number) => {
+  return value.toLocaleString('pt-BR');
+};
+
 export const formatDateRange = (range: { from?: Date; to?: Date }) => {
   const now = new Date();
   return {

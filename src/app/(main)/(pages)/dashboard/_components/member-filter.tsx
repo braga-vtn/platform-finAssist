@@ -77,7 +77,7 @@ export function MemberFilter({ team, itemsSelected, onFilter }: Props): React.JS
           Equipe
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto min-w-48 p-0" align="start">
         <Command>
           <CommandList>
             <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>

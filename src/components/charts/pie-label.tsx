@@ -13,9 +13,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { PieChartIcon } from 'lucide-react';
 
 interface Data {
-  key: string;
+  member: string;
   value: number;
 }
 
@@ -24,15 +25,21 @@ interface Label {
   label: string;
 }
 
+type Team = {
+  value: string;
+  label: string;
+}
+  
 interface Props {
+  team: Team[];
   title: string;
   label: string;
-  total?: string;
+  days: number;
   data: Data[];
   labels: Label[];
 }
 
-export function ChartPieLabel({ title, label, data, labels, total }: Props): React.JSX.Element {
+export function ChartPieLabel({ team, title, label, days, data, labels }: Props): React.JSX.Element {
   const colors = [
     '#a3a3a3',
     '#d4d4d4',
@@ -55,8 +62,8 @@ export function ChartPieLabel({ title, label, data, labels, total }: Props): Rea
     { title: { label } } as ChartConfig
   );
 
-  const chartData = data.map(({ key, value }, index) => ({
-    key,
+  const chartData = data.map(({ member, value }, index) => ({
+    member: team.findLast((item) => item.value === member)?.label || '',
     value,
     fill: colors[index % colors.length],
   }));
@@ -66,22 +73,19 @@ export function ChartPieLabel({ title, label, data, labels, total }: Props): Rea
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b dark:border-neutral-700 p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 pl-3 py-2 mt-0.5">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          <p className="text-xs text-muted-foreground">
-            Atualmente
-          </p>
+          {days &&
+            <p className="text-xs text-muted-foreground">
+              {days > 1 ? `Período de ${days} dias` :
+                'Período 1 dia'}
+            </p>}
         </div>
-        {total && (
-          <div className="flex flex-col justify-center gap-1 text-center border-l border-t-0 px-8 py-2">
-            <span className="text-xs text-muted-foreground">Total</span>
-            <span className="text-base font-bold leading-none">{total}</span>
-          </div>
-        )}
+        <PieChartIcon className="size-4 m-3 mb-2" />
       </CardHeader>
       <CardContent className="pt-3">
         <ChartContainer config={chartConfig} className="aspect-auto h-[234px] w-full">
           <PieChart>
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie data={chartData} dataKey="value" label nameKey="key" />
+            <ChartTooltip content={<ChartTooltipContent hideIndicator hideLabel />} />
+            <Pie data={chartData} dataKey="value" label nameKey="member" />
           </PieChart>
         </ChartContainer>
       </CardContent>

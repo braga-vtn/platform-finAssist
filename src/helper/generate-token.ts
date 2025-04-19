@@ -12,9 +12,16 @@ if (!encryptionKey) {
   throw new Error('The Encryption_Key encryption key was not found');
 }
 
+interface BearerEncryption {
+  activationKey: string;
+  userId: string;
+  email?: string;
+  code?: string;
+}
+
 export async function generateToken(
   expiresInSeconds?: number,
-  bearerEncryption?: { domain: string; userId: string; companyId: string }
+  bearerEncryption?: BearerEncryption,
 ): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -11,8 +11,8 @@ import { toast } from "sonner";
 export default function Page() {
   const [clients, setClients] = useState<Client2[]>([]);
   const [team, setTeam] = useState<Team[]>([]);
-  const { userId } = useUser();
   const [loading, setLoading] = useState<boolean>(false);
+  const { userId } = useUser();
 
   useEffect(() => {
     if (!userId) return;

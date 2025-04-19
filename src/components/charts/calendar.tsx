@@ -81,7 +81,7 @@ export function ChartCalendar({ className, onDateChange }: CalendarDashboardProp
               <Button
                 key={label}
                 variant="style"
-                className="justify-start font-normal border-none"
+                className="justify-start font-normal dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-950"
                 onClick={() => {
                   setDate(range);
                   onDateChange(range);

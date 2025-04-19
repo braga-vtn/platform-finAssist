@@ -23,18 +23,32 @@ import {
 
 type Data = {
   date: string;
-  value: number | string;
+  value: number;
 }
 
 interface Props {
   title: string;
-  days: number;
   label: string;
   data: Data[];
 }
 
-export function ChartAreaInteractive({ title, data, days, label }: Props): React.JSX.Element {
-  const [timeRange, setTimeRange] = React.useState('90d');
+export function ChartAreaInteractive({ title, data, label }: Props): React.JSX.Element {
+  const [timeRange, setTimeRange] = React.useState('30d');
+
+  const filteredData = React.useMemo(() => {
+    if (!data || data.length === 0) return [];
+    
+    const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    let sliceCount = 31;
+    if (timeRange === '14d') {
+      sliceCount = 14;
+    } else if (timeRange === '7d') {
+      sliceCount = 7;
+    }
+    
+    return sortedData.slice(0, sliceCount);
+  }, [data, timeRange]);
 
   const chartConfig = {
     value: {
@@ -49,8 +63,7 @@ export function ChartAreaInteractive({ title, data, days, label }: Props): React
         <div className="flex flex-1 flex-col justify-center gap-1 pl-3 py-2 mt-0.5">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
           <p className="text-xs text-muted-foreground">
-            {days > 1 ? `Período de ${days} dias` :
-              'Período 1 dia'}
+            Os valores são baseados na quantidade atual de clientes
           </p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
@@ -61,14 +74,14 @@ export function ChartAreaInteractive({ title, data, days, label }: Props): React
             <SelectValue placeholder="Em 3 meses" />
           </SelectTrigger>
           <SelectContent className="rounded-xl">
-            <SelectItem value="90d" className="rounded-lg">
-              Em 3 meses
-            </SelectItem>
             <SelectItem value="30d" className="rounded-lg">
-              Em 30 dias
+              Em 1 mês
+            </SelectItem>
+            <SelectItem value="14d" className="rounded-lg">
+              Em 14 dias
             </SelectItem>
             <SelectItem value="7d" className="rounded-lg">
-              Nessa semana
+              Em 1 semana
             </SelectItem>
           </SelectContent>
         </Select>
@@ -78,7 +91,7 @@ export function ChartAreaInteractive({ title, data, days, label }: Props): React
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
-          <AreaChart data={data}>
+          <AreaChart data={filteredData}>
             <defs>
               <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
                 <stop
@@ -100,11 +113,12 @@ export function ChartAreaInteractive({ title, data, days, label }: Props): React
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const [year, month, day] = value.split('-');
-                const date = new Date(year, month - 1, day);
+                const date = new Date(value);
+                if (isNaN(date.getTime())) return '';
                 return date.toLocaleDateString('pt-BR', {
                   month: 'short',
                   day: 'numeric',
+                  timeZone: 'UTC',
                 });
               }}
             />
@@ -113,12 +127,16 @@ export function ChartAreaInteractive({ title, data, days, label }: Props): React
               content={
                 <ChartTooltipContent
                   indicator="dot"
+                  hideIndicator
+                  isCurrency
+                  className='w-60'
                   labelFormatter={(value) => {
-                    const [year, month, day] = value.split('-');
-                    const date = new Date(year, month - 1, day);
+                    const date = new Date(value);
+                    if (isNaN(date.getTime())) return '';
                     return date.toLocaleDateString('pt-BR', {
                       month: 'short',
                       day: 'numeric',
+                      timeZone: 'UTC',
                     });
                   }}
                 />
@@ -126,7 +144,7 @@ export function ChartAreaInteractive({ title, data, days, label }: Props): React
             />
             <Area
               dataKey="value"
-              type="natural"
+              type="monotoneX"
               strokeWidth={1.5}
               stroke="CurrentColor"
               fill="url(#fillValue)"
