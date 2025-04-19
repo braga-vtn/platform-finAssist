@@ -9,7 +9,7 @@ function Hero() {
   const router = useRouter();
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(
-    () => ['amazing', 'new', 'wonderful', 'beautiful', 'smart'],
+    () => ['Incrível', 'FinAssist', 'Inteligente', 'FinAssist'],
     []
   );
 
@@ -34,7 +34,7 @@ function Hero() {
         <div className="flex gap-8 py-30 lg:py-50 items-center justify-center flex-col">
           <div className="flex gap-4 flex-col">
             <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter text-center font-regular">
-              <span className="text-spektr-cyan-50">This is something</span>
+              <span className="text-spektr-cyan-50">Isso é algo</span>
               <span className="relative flex w-full justify-center overflow-hidden text-center md:pb-4 md:pt-1">
                 &nbsp;
                 {titles.map((title, index) => (
@@ -62,15 +62,12 @@ function Hero() {
             </h1>
 
             <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-center">
-              Managing a small business today is already tough. Avoid further
-              complications by ditching outdated, tedious trade methods. Our
-              goal is to streamline SMB trade, making it easier and faster than
-              ever.
+              Gerencie clientes e boletos, com integração ao Whatsapp, Email e o banco Inter. De forma prática e rápida!
             </p>
           </div>
           <div className="flex flex-row gap-3">
             <Button size="lg" className="gap-4" onClick={() => onRedirect('/auth/sign-in')}>
-              Entrar <MoveRight className="w-4 h-4" />
+              Entrar na FinAssist <MoveRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
