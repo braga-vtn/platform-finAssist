@@ -43,6 +43,9 @@ export const getClientPageData = async (userId: string) => {
         observation: true,
         dueAt: true,
         createdAt: true,
+      },
+      orderBy: {
+        updatedAt: 'desc'
       }
     });
 

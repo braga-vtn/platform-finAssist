@@ -20,6 +20,9 @@ export const getInvoices = async (userId: string) => {
         fileUrl: true,
         dueAt: true,
         createdAt: true,
+      },
+      orderBy: {
+        updatedAt: 'desc'
       }
     });
 
@@ -62,6 +65,9 @@ export const getClients = async (userId: string) => {
         observation: true,
         dueAt: true,
         createdAt: true,
+      },
+      orderBy: {
+        updatedAt: 'desc'
       }
     });
 

@@ -114,6 +114,7 @@ model Invoices {
   payload    Json
   fileUrl    String?
   pixCode    String?
+  memberId   String
   dueAt      DateTime
   updatedAt  DateTime       @default(now()) @updatedAt
   createdAt  DateTime       @default(now())
@@ -150,6 +151,7 @@ model Messages {
   type      MessageType
   invoiceId String
   payload   Json
+  memberId   String
   createdAt DateTime    @default(now())
   userId    String
   User      User        @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
