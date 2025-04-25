@@ -75,7 +75,7 @@ export const FormSignIn = ({ emailLogin, password, onEmailChange, onPasswordChan
           <Logo withName={true} />
           <CardHeader className="mb-4">
             <CardDescription className="sm:text-center">
-              Digite suas credênciais para fazer login na sua conta.
+              ABC Digite suas credênciais para fazer login na sua conta.
             </CardDescription>
           </CardHeader>
         </div>

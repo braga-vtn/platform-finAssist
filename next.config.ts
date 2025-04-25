@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         port: '',
         search: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'finassist-storage.s3.us-east-1.amazonaws.com',
+        port: '',
+        search: '',
+      },
     ],
   },
 };

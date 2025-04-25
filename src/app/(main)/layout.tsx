@@ -110,9 +110,9 @@ const Layout = ({ children }: Props): JSX.Element => {
     if (!id) {
       return onLogout();
     }
-    
+
     setUserId(id);
-    
+
     let parent = '';
     if (id === userIdOld) {
       setAdmin(true);
@@ -120,7 +120,7 @@ const Layout = ({ children }: Props): JSX.Element => {
       setAdmin(false);
       parent = id;
     }
-  
+
     try {
       await updateParent(parent, userIdOld);
     } catch {
