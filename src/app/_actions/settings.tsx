@@ -16,6 +16,7 @@ export const getProfile = async (userId: string) => {
         createdAt: true,
         register: true,
         city: true,
+        phone: true,
         uf: true,
         zipcode: true,
         address: true,
@@ -31,6 +32,7 @@ export const getProfile = async (userId: string) => {
         createdAt: user.createdAt,
         register: user.register,
         city: user.city,
+        phone: user.phone,
         uf: user.uf,
         zipcode: user.zipcode,
         address: user.address,
@@ -65,7 +67,7 @@ export const getUrlUpload = async (fileType: string, userId: string) => {
   }
 };
 
-export const updateProfile = async (profileImageID: string, name: string, register: string, city: string, uf: string, zipcode: string, address: string, neighborhood: string, userId: string) => {
+export const updateProfile = async (profileImageID: string, name: string, register: string, city: string, phone: string, uf: string, zipcode: string, address: string, neighborhood: string, userId: string) => {
   try {
     await client.user.update({
       where: {
@@ -76,6 +78,7 @@ export const updateProfile = async (profileImageID: string, name: string, regist
         name,
         register,
         city,
+        phone,
         uf,
         zipcode,
         address,

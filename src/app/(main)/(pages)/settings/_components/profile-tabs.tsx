@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { states } from "@/constants/infra";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 export const onUpload = async (url: string, file: File) => {
   try {
@@ -53,15 +54,13 @@ export const ProfileTabs = () => {
   const [avatarNow, setAvatarNow] = useState('');
   const [fileTemp, setFileTemp] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Novos estados:
   const [register, setRegister] = useState('');
   const [city, setCity] = useState('');
+  const [phone, setPhone] = useState('');
   const [uf, setUf] = useState('');
   const [zipcode, setZipcode] = useState('');
   const [address, setAddress] = useState('');
   const [neighborhood, setNeighborhood] = useState('');
-
   const { userId } = useUser();
 
   const handleEditClick = useCallback(() => {
@@ -86,6 +85,7 @@ export const ProfileTabs = () => {
         setCreatedAt(profileData?.createdAt.toDateString() || '');
         setRegister(profileData?.register || '');
         setCity(profileData?.city || '');
+        setPhone(profileData?.phone || '');
         setUf(profileData?.uf || '');
         setZipcode(profileData?.zipcode || '');
         setAddress(profileData?.address || '');
@@ -110,7 +110,7 @@ export const ProfileTabs = () => {
         setAvatarNow(profileImageID);
       }
 
-      const upt = await updateProfile(profileImageID, name, register, city, uf, zipcode, address, neighborhood, userId);
+      const upt = await updateProfile(profileImageID, name, register, city, phone, uf, zipcode, address, neighborhood, userId);
       if (!upt) {
         throw new Error();
       }
@@ -195,6 +195,10 @@ export const ProfileTabs = () => {
             <Input value={city} onChange={(e) => setCity(e.target.value)} type="text" id="city" />
           </div>
           <div className="grid w-1/3 items-center gap-1.5">
+            <Label htmlFor="phone">WhatsApp</Label>
+            <PhoneInput id="phone" maxLength={17} defaultCountry='BR' value={phone} onChange={(value) => setPhone(value)} />
+          </div>
+          <div className="grid w-1/10 items-center gap-1.5">
             <Label htmlFor="uf">UF</Label>
             <Select value={uf} onValueChange={(value) => setUf(value)}>
               <SelectTrigger className="w-full border dark:border-neutral-700 border-neutral-300 bg-neutral-100 dark:bg-neutral-900 shadow-md">

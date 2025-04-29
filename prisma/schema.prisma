@@ -26,6 +26,7 @@ model User {
   parent       String?
   register     String?
   address      String?
+  phone        String?
   neighborhood String?
   city         String?
   uf           String?
@@ -151,7 +152,7 @@ model Messages {
   type      MessageType
   invoiceId String
   payload   Json
-  memberId   String
+  memberId  String
   createdAt DateTime    @default(now())
   userId    String
   User      User        @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
