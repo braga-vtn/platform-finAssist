@@ -59,7 +59,7 @@ const Layout = ({ children }: Props): JSX.Element => {
       if (!userId) throw new Error();
       setUserIdOld(userId);
       setAccounts(accounts);
-
+ 
       let admin = false;
       if (!parent) {
         admin = true;
