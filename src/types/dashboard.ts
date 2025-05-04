@@ -27,6 +27,8 @@ export type InsightsProps = {
   newClients: Value;
   invoicesGenerated: Value;
   messagesSended: Value;
+  pendingPayment: Value;
+  paymentMade: Value;
   presumedRevenue: Value;
   teamClients: Team[] | [];
   invoices: Graph[] | [];

@@ -262,7 +262,7 @@ export const SidebarAccountItem = ({
           display: animate ? (open ? 'inline-block' : 'none') : 'inline-block',
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className={cn('text-sm text-current group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0')}
+        className={cn('text-xs text-current group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0')}
       >
         {account.name}{account.type === 'member' && ' - Membro'}
       </motion.span>
@@ -321,7 +321,7 @@ export const SidebarAccount = ({
           {open && <ChevronsUpDown className="h-4 w-4 text-neutral-500 shrink-0 opacity-50" />}
         </div>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-64" align="start" side="top">
+      <PopoverContent className="p-0 w-auto max-w-96" align="start" side="top">
         <Command>
           <CommandList>
             <CommandEmpty>Nenhuma conta encontrada.</CommandEmpty>
@@ -337,7 +337,7 @@ export const SidebarAccount = ({
                       <Avatar className='border'>
                         {account.avatar && <AvatarImage className="flex-shrink-0 rounded-full" src={account.avatar} />}
                       </Avatar>
-                      <span className="text-sm">
+                      <span className="text-xs">
                         {account.name}
                       </span>
                     </div>

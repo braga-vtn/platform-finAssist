@@ -6,7 +6,7 @@ import ChartCard from '@/components/charts/card';
 import { ChartLineInteractive } from '@/components/charts/line-interactive';
 import { ChartPieLabel } from '@/components/charts/pie-label';
 import { calculateDateDifference, formatDateRange, getDefaultDateRange } from '@/lib/utils';
-import { ReceiptText, Send, SendIcon, Users, Wallet } from 'lucide-react';
+import { Clock, DollarSign, ReceiptText, Send, SendIcon, Users, Wallet } from 'lucide-react';
 import { JSX, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useUser } from '@/context/user';
@@ -51,6 +51,8 @@ const insightsDefault = {
   newClients: { value: 0 },
   invoicesGenerated: { value: 0 },
   messagesSended: { value: 0 },
+  pendingPayment: { value: 0 },
+  paymentMade: { value: 0 },
   presumedRevenue: { value: 0 },
   teamClients: [],
   invoices: [],
@@ -140,6 +142,8 @@ export default function Dashboard(): JSX.Element {
     { type: 'number', title: 'Boletos Gerados', icon: ReceiptText, value: insights.invoicesGenerated.value },
     { type: 'number', title: 'Mensagens Enviadas', icon: Send, value: insights.messagesSended.value },
     { type: 'money', title: 'Faturamento Presumido', icon: Wallet, value: insights.presumedRevenue.value },
+    { type: 'money', title: 'Pagamento Pendente', icon: Clock, value: insights.pendingPayment.value },
+    { type: 'money', title: 'Pagamento Efetuado', icon: DollarSign, value: insights.paymentMade.value },
   ];
 
   if (loading && team.length === 0) {
@@ -156,7 +160,7 @@ export default function Dashboard(): JSX.Element {
         <MemberFilter team={team} itemsSelected={itemsSelected} onFilter={setItemsSelected} />
         <ChartCalendar onDateChange={handleDateChange} />
       </div>
-      <div className='grid grid-cols-4 gap-4'>
+      <div className='grid grid-cols-6 gap-4'>
         {ChartCards.map((item) =>
           <ChartCard key={`card-${item.title}`} type={item.type} title={item.title} Icon={item.icon} value={item.value} days={days} />
         )}
