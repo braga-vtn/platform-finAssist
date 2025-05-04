@@ -18,7 +18,7 @@ export const getInvoices = async (userId: string) => {
         value: true,
         pixCode: true,
         fileUrl: true,
-        dueAt: true,
+        dueAt: true, 
         createdAt: true,
       },
       orderBy: {

@@ -103,7 +103,7 @@ export default function Dashboard(): JSX.Element {
       setLoading(true);
       const data = await insightsData(dates.start, dates.end, members, userId);
       if (data) {
-        setInsights(data);
+        setInsights(data); 
       }
     } catch {
       toast('Erro Inesperado', { description: 'Não foi possível buscar as métricas, tente novamente mais tarde!' });
