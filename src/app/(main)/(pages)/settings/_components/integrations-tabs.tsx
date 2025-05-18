@@ -27,6 +27,7 @@ interface WhatsappFormData {
   systemAccessToken: string;
   phoneNumberId: string;
   templateName: string;
+  templateAlert: string;
 }
 
 interface EmailFormData {
@@ -110,13 +111,22 @@ export const WhatsappCard = ({ data, onChange }: WhatsappCardProps) => {
               onChange={(e) => onChange("whatsappBusinessId", e.target.value)}
             />
           </div>
-          <div className="grid w-1/3 items-center gap-1.5">
-            <Label htmlFor="phone-number-id">Template</Label>
+          <div className="grid w-1/4 items-center gap-1.5">
+            <Label htmlFor="phone-number-id">Template de Boleto</Label>
             <Input
               id="template-name"
               type="text"
               value={data.templateName}
               onChange={(e) => onChange("templateName", e.target.value)}
+            />
+          </div>
+          <div className="grid w-1/4 items-center gap-1.5">
+            <Label htmlFor="template-alert">Template de Aviso</Label>
+            <Input
+              id="template-alert"
+              type="text"
+              value={data.templateAlert}
+              onChange={(e) => onChange("templateAlert", e.target.value)}
             />
           </div>
         </div>
@@ -271,6 +281,7 @@ export const IntegrationsTabs = () => {
       systemAccessToken: "",
       phoneNumberId: "",
       templateName: "",
+      templateAlert: "",
     },
     email: {
       from: "",

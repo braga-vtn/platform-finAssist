@@ -42,11 +42,13 @@ const formSchema = z.object({
   neighborhood: z.string().min(1, { message: "" }),
   address: z.string().optional(),
   dueAt: z.string(),
+  dueLimitAt: z.string().optional(),
   value: z.string(),
   email: z.string().optional(),
   phone: z.string().optional(),
-  SendByWhatsapp: z.boolean().default(false),
-  SendByEmail: z.boolean().default(false),
+  sendBilling: z.boolean().default(true),
+  sendByWhatsapp: z.boolean().default(false),
+  sendByEmail: z.boolean().default(false),
   memberId: z.string().min(1, { message: "" }),
   observation: z.string().optional(),
 });
@@ -68,11 +70,13 @@ export function DataTableCreateClient({
       neighborhood: "",
       address: "",
       dueAt: new Date().toISOString(),
+      dueLimitAt: '',
       value: '0',
       email: "",
       phone: "",
-      SendByWhatsapp: true,
-      SendByEmail: false,
+      sendBilling: true,
+      sendByWhatsapp: true,
+      sendByEmail: false,
       memberId: team && team[0] && team[0].value || "",
       observation: "",
     },
@@ -109,7 +113,7 @@ export function DataTableCreateClient({
               <AlertDialogHeader className="contents space-y-0 text-left">
                 <AlertDialogTitle className='p-5'>Cadastrar Cliente</AlertDialogTitle>
                 <AlertDialogDescription asChild>
-                  <div className='p-5'>
+                  <div className="px-5 pb-5">
                     <ProfileForm form={form} team={team} />
                   </div>
                 </AlertDialogDescription>

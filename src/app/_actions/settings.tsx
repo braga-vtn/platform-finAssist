@@ -261,6 +261,7 @@ interface WhatsappConfig {
   systemAccessToken: string;
   phoneNumberId: string;
   templateName: string;
+  templateAlert: string;
 }
 
 interface EmailConfig {
@@ -300,6 +301,7 @@ export const getIntegrations = async (userId: string): Promise<IntegrationConfig
         systemAccessToken: "",
         phoneNumberId: "",
         templateName: "",
+        templateAlert: "",
       },
       email: {
         from: "",

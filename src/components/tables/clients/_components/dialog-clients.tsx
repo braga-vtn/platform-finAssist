@@ -34,11 +34,13 @@ const formSchema = z.object({
   neighborhood: z.string().min(1, { message: "" }),
   address: z.string().optional(),
   dueAt: z.string().min(1, { message: "" }),
+  dueLimitAt: z.string().optional(),
   value: z.string(),
   email: z.string().optional(),
   phone: z.string().optional(),
-  SendByWhatsapp: z.boolean().default(false),
-  SendByEmail: z.boolean().default(false),
+  sendBilling: z.boolean().default(true),
+  sendByWhatsapp: z.boolean().default(false),
+  sendByEmail: z.boolean().default(false),
   memberId: z.string().min(1, { message: "" }),
   observation: z.string().optional(),
 });
@@ -71,10 +73,12 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
       value: '0',
       email: '',
       phone: '',
-      SendByWhatsapp: false,
-      SendByEmail: false,
+      sendByWhatsapp: false,
+      sendByEmail: false,
       memberId: '',
       observation: '',
+      dueLimitAt: '',
+      sendBilling: false
     },
     mode: 'onChange',
   });
@@ -92,11 +96,13 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
         neighborhood: item.neighborhood,
         address: item.address ?? '',
         dueAt: item.dueAt,
+        dueLimitAt: item.dueLimitAt ?? '',
         value: String(item.value),
         email: item.email ?? '',
         phone: item.phone ?? '',
-        SendByWhatsapp: item.SendByWhatsapp,
-        SendByEmail: item.SendByEmail,
+        sendBilling: item.sendBilling,
+        sendByWhatsapp: item.sendByWhatsapp,
+        sendByEmail: item.sendByEmail,
         memberId: item.memberId,
         observation: item.observation ?? '',
       });
@@ -144,7 +150,7 @@ const DialogClients = ({ open, item, team, onOpenChange, onUpdateClient, onDelet
                   </DialogClose>
                 </DialogTitle>
                 <DialogDescription asChild>
-                  <div className="p-5">
+                  <div className="px-5 pb-5">
                     <ProfileForm edition={true} form={form} team={team} />
                   </div>
                 </DialogDescription>

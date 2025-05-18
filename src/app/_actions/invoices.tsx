@@ -59,10 +59,12 @@ export const getClients = async (userId: string) => {
         value: true,
         email: true,
         phone: true,
-        SendByWhatsapp: true,
-        SendByEmail: true,
+        sendByWhatsapp: true,
+        sendByEmail: true,
+        sendBilling: true,
         memberId: true,
         observation: true,
+        dueLimitAt: true,
         dueAt: true,
         createdAt: true,
       },
@@ -74,6 +76,7 @@ export const getClients = async (userId: string) => {
     const formattedClients = clients.map(item => ({
       ...item,
       uf: item.uf as UF,
+      dueLimitAt: item.dueAt.toDateString(),
       dueAt: item.dueAt.toDateString(),
       createdAt: item.createdAt.toDateString(),
     }));
@@ -109,6 +112,38 @@ export const sendNotification = async (id: string, userId: string) => {
       method: 'POST',
       bearerEncryption: {
         activationKey: '',
+        userId,
+      },
+    });
+
+    return true;
+  } catch {
+    throw new Error();
+  }
+};
+
+export const onCancel = async (id: string, userId: string) => {
+  try {
+    await httpRequest({
+      path: `/v1/invoices/${id}`,
+      method: 'DELETE',
+      bearerEncryption: {
+        activationKey: '',
+        userId,
+      },
+    });
+
+    return true;
+  } catch {
+    throw new Error();
+  }
+};
+
+export const onDelete = async (id: string, userId: string) => { 
+  try {
+    await client.invoices.delete({
+      where: {
+        id,
         userId,
       },
     });

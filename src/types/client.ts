@@ -12,11 +12,13 @@ export type Client = {
   value: number;
   email?: string | undefined;
   phone?: string | undefined;
-  SendByWhatsapp: boolean;
-  SendByEmail: boolean;
+  sendByWhatsapp: boolean;
+  sendByEmail: boolean;
   memberId: string;
   observation?: string | undefined | null;
   dueAt: string;
+  sendBilling: boolean;
+  dueLimitAt?: string | undefined;
 };
 
 export type UF = (typeof states)[number];
@@ -34,10 +36,12 @@ export type Client2 = {
   value: number;
   email?: string | undefined;
   phone?: string | undefined;
-  SendByWhatsapp: boolean;
-  SendByEmail: boolean;
+  sendByWhatsapp: boolean;
+  sendByEmail: boolean;
   memberId: string;
   observation?: string | undefined | null;
   dueAt: string;
   createdAt: string;
+  sendBilling: boolean;
+  dueLimitAt?: string | undefined;
 };

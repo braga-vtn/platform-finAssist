@@ -15,9 +15,11 @@ interface Props {
   id: string;
   fileUrl: string;
   pixCode: string;
+  onDelete: (_id: string) => void;
+  onCancel: (_id: string) => void;
 }
 
-export function DataTableRowActions({ id, fileUrl, pixCode }: Props) {
+export function DataTableRowActions({ id, fileUrl, pixCode, onDelete, onCancel }: Props) {
   const { userId } = useUser();
 
   const handleCopyPixCode = async () => {
@@ -63,6 +65,8 @@ export function DataTableRowActions({ id, fileUrl, pixCode }: Props) {
         <DropdownMenuItem disabled={!fileUrl} onClick={handleDownload}>Baixar</DropdownMenuItem>
         <DropdownMenuItem disabled={!id} onClick={handleNotification}>Reenviar Notificação</DropdownMenuItem>
         <DropdownMenuItem disabled={!pixCode} onClick={handleCopyPixCode}>Copiar Pix</DropdownMenuItem>
+        <DropdownMenuItem disabled={!id} onClick={() => onDelete(id)}>Excluir</DropdownMenuItem>
+        <DropdownMenuItem disabled={!id} variant="destructive" onClick={() => onCancel(id)}>Cancelar</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,5 +1,5 @@
 'use client';
-import { createInvoice, getInvoices } from "@/app/_actions/invoices";
+import { createInvoice, getInvoices, onCancel, onDelete } from "@/app/_actions/invoices";
 import TableInvoices from "@/components/tables/invoices";
 import { Spinner } from "@/components/ui/spinner";
 import { useUser } from "@/context/user";
@@ -46,6 +46,38 @@ export default function Page() {
     }
   }; 
 
+  const handleCancel = async (id: string) => {
+    if (!id || !userId) return;
+
+    try {
+      await onCancel(id, userId);
+    } catch {
+      toast('Erro Inesperado', { description: 'Não foi possível cancelar o boleto, tente novamente mais tarde.' });
+    } finally {
+      setValues((items) =>
+        items.map((item) =>
+          item.id === id ? { ...item, status: 'canceled' } : item
+        )
+      );
+      toast('Boleto Cancelado', { description: 'O boleto foi encerrado na sua conta do Banco Inter.' });
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!id || !userId) return;
+
+    try {
+      await onDelete(id, userId);
+    } catch {
+      toast('Erro Inesperado', { description: 'Não foi possível deletar o boleto, tente novamente mais tarde.' });
+    } finally {
+      const updatedValues = values.filter(item => item.id !== id);
+
+      setValues(updatedValues);
+      toast('Boleto Deletado', { description: 'O boleto foi deletado com sucesso.' });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[calc(90vh-50px)]">
@@ -56,7 +88,7 @@ export default function Page() {
 
   return (
     <div className='space-y-4'>
-      <TableInvoices items={values} onCreateInvoice={handleCreateInvoice}/>
+      <TableInvoices items={values} onCreateInvoice={handleCreateInvoice} onDelete={handleDelete} onCancel={handleCancel}/>
     </div>
   );
 }

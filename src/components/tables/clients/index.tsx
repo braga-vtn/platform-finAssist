@@ -15,12 +15,14 @@ type ItemProps = {
   value: number;
   email: string | undefined;
   phone: string | undefined;
-  SendByWhatsapp: boolean;
-  SendByEmail: boolean;
+  sendByWhatsapp: boolean;
+  sendByEmail: boolean;
   memberId: string;
   observation: string | undefined;
   createdAt: string;
   dueAt: string;
+  dueLimitAt: string | undefined;
+  sendBilling: boolean;
 }
 
 type Props = {
@@ -46,8 +48,10 @@ export default function TableClients({ items, team, onUpdateClient, onDeleteClie
       value: item.value,
       email: item.email,
       phone: item.phone,
-      SendByWhatsapp: item.SendByWhatsapp,
-      SendByEmail: item.SendByEmail,
+      sendByWhatsapp: item.sendByWhatsapp,
+      sendByEmail: item.sendByEmail,
+      sendBilling: item.sendBilling,
+      dueLimitAt: item.dueLimitAt,
       memberId: item.memberId,
       observation: item.observation || undefined,
       createdAt: item.createdAt,

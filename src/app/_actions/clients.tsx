@@ -37,10 +37,12 @@ export const getClientPageData = async (userId: string) => {
         value: true,
         email: true,
         phone: true,
-        SendByWhatsapp: true,
-        SendByEmail: true,
+        sendBilling: true,
+        sendByWhatsapp: true,
+        sendByEmail: true,
         memberId: true,
         observation: true,
+        dueLimitAt: true,
         dueAt: true,
         createdAt: true,
       },
@@ -62,6 +64,7 @@ export const getClientPageData = async (userId: string) => {
     const formattedClients = clients.map(client => ({
       ...client,
       uf: client.uf as UF,
+      dueLimitAt: client.dueLimitAt?.toDateString() || '',
       dueAt: client.dueAt.toDateString(),
       createdAt: client.createdAt.toDateString(),
     }));
@@ -104,16 +107,18 @@ export const createClient = async (item: Client, userId: string) => {
         value: true,
         email: true,
         phone: true,
-        SendByWhatsapp: true,
-        SendByEmail: true,
+        sendBilling: true,
+        sendByWhatsapp: true,
+        sendByEmail: true,
         memberId: true,
         observation: true,
+        dueLimitAt: true,
         dueAt: true,
         createdAt: true,
       }
     });
 
-    return { ...newClient, uf: newClient.uf as UF, dueAt: newClient.dueAt.toDateString(), createdAt: newClient.createdAt.toDateString() };
+    return { ...newClient, uf: newClient.uf as UF, dueLimitAt: newClient.dueAt.toDateString(), dueAt: newClient.dueAt.toDateString(), createdAt: newClient.createdAt.toDateString() };
   } catch {
     return null;
   }

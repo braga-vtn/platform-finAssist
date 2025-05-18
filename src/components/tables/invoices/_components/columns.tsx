@@ -37,7 +37,7 @@ function formatMoney(value: string) {
   }).format(valueInReais);
 }
 
-export const createColumns = (): ColumnDef<Task>[] => [
+export const createColumns = (onDelete: (_id: string) => void, onCancel: (_id: string) => void): ColumnDef<Task>[] => [
   {
     accessorKey: 'identifier',
     header: ({ column }) => (
@@ -155,6 +155,13 @@ export const createColumns = (): ColumnDef<Task>[] => [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions id={row.getValue('id')} fileUrl={row.getValue('fileUrl')} pixCode={row.getValue('pixCode')} />,
+    cell: ({ row }) => 
+      <DataTableRowActions
+        id={row.getValue('id')}
+        fileUrl={row.getValue('fileUrl')}
+        pixCode={row.getValue('pixCode')}
+        onDelete={onDelete}
+        onCancel={onCancel}
+      />,
   },
 ];

@@ -55,10 +55,12 @@ model Clients {
   value          Int // Valor das parcelas
   email          String
   phone          String
-  SendByWhatsapp Boolean    @default(true)
-  SendByEmail    Boolean    @default(true)
+  sendByWhatsapp Boolean    @default(true)
+  sendByEmail    Boolean    @default(false)
   observation    String?
   memberId       String // clerkId de quem criou o cliente
+  sendBilling    Boolean    @default(true)
+  dueLimitAt     DateTime?
   dueAt          DateTime
   updatedAt      DateTime   @default(now()) @updatedAt
   createdAt      DateTime   @default(now())
@@ -156,4 +158,16 @@ model Messages {
   createdAt DateTime    @default(now())
   userId    String
   User      User        @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+}
+
+enum SchedulingType {
+  treeDay
+}
+
+model Scheduling {
+  id         Int            @id @default(autoincrement())
+  type       SchedulingType
+  externalId String
+  expiresAt  DateTime
+  createdAt  DateTime       @default(now())
 }

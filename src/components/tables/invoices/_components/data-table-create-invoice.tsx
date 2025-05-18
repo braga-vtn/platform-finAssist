@@ -76,7 +76,7 @@ export function DataTableCreateInvoice({
 
   useEffect(() => {
     if (!userId) return;
-
+ 
     const fetchData = async () => {
       try {
         const clients = await getClients(userId) || [];

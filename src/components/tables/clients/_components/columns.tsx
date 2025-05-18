@@ -19,8 +19,8 @@ export const taskSchema = z.object({
   value: z.number(),
   email: z.string().optional(),
   phone: z.string().optional(),
-  SendByWhatsapp: z.boolean(),
-  SendByEmail: z.boolean(),
+  sendByWhatsapp: z.boolean(),
+  sendByEmail: z.boolean(),
   memberId: z.string(),
   observation: z.string().optional(),
   createdAt: z.string(),
@@ -40,7 +40,7 @@ function formatMoney(value: string) {
   if (isNaN(numericValue)) return 'R$ 0,00';
 
   const valueInReais = numericValue / 100;
-  
+
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -51,34 +51,34 @@ function formatMoney(value: string) {
 
 function formatPhone(phone: string) {
   if (!phone) return phone;
-  
+
   const phoneDigits = phone.replace(/\D/g, '');
-  
+
   if (phoneDigits.length === 13 && phoneDigits.startsWith('55')) {
     const countryCode = phoneDigits.slice(0, 2);
     const areaCode = phoneDigits.slice(2, 4);
     const firstDigit = phoneDigits.slice(4, 5);
     const firstPart = phoneDigits.slice(5, 9);
     const secondPart = phoneDigits.slice(9, 13);
-    
+
     return `+${countryCode} (${areaCode})${firstDigit} ${firstPart}-${secondPart}`;
-  } 
+  }
   else if (phoneDigits.length === 11) {
     const areaCode = phoneDigits.slice(0, 2);
     const firstDigit = phoneDigits.slice(2, 3);
     const firstPart = phoneDigits.slice(3, 7);
     const secondPart = phoneDigits.slice(7, 11);
-    
+
     return `(${areaCode})${firstDigit} ${firstPart}-${secondPart}`;
   }
   else if (phoneDigits.length === 10) {
     const areaCode = phoneDigits.slice(0, 2);
     const firstPart = phoneDigits.slice(2, 6);
     const secondPart = phoneDigits.slice(6, 10);
-    
+
     return `(${areaCode}) ${firstPart}-${secondPart}`;
   }
-  
+
   return phone;
 }
 
@@ -218,14 +218,14 @@ export const createColumns = (team: Team[]): ColumnDef<Task>[] => [
     enableHiding: false,
   },
   {
-    accessorKey: 'SendByWhatsapp',
+    accessorKey: 'sendBilling',
     header: ({ column }) => (
       <div className="flex items-center justify-center">
-        <DataTableColumnHeader column={column} title="Enviar no Whatsapp" />
+        <DataTableColumnHeader column={column} title="Enviar Cobrança" />
       </div>
     ),
     cell: ({ row }: { row: Row<Task> }) => (
-      <div className="w-auto flex items-center justify-center">{row.getValue('SendByWhatsapp') ? <Check className='size-4' /> : <X className='size-4' />}</div>
+      <div className="w-auto flex items-center justify-center">{row.getValue('sendBilling') ? <Check className='size-4' /> : <X className='size-4' />}</div>
     ),
     filterFn: (row: Row<Task>, id: string, value: unknown[]): boolean => {
       return value.includes(row.getValue(id));
@@ -234,14 +234,30 @@ export const createColumns = (team: Team[]): ColumnDef<Task>[] => [
     enableHiding: false,
   },
   {
-    accessorKey: 'SendByEmail',
+    accessorKey: 'sendByWhatsapp',
+    header: ({ column }) => (
+      <div className="flex items-center justify-center">
+        <DataTableColumnHeader column={column} title="Enviar no Whatsapp" />
+      </div>
+    ),
+    cell: ({ row }: { row: Row<Task> }) => (
+      <div className="w-auto flex items-center justify-center">{row.getValue('sendByWhatsapp') ? <Check className='size-4' /> : <X className='size-4' />}</div>
+    ),
+    filterFn: (row: Row<Task>, id: string, value: unknown[]): boolean => {
+      return value.includes(row.getValue(id));
+    },
+    enableSorting: true,
+    enableHiding: false,
+  },
+  {
+    accessorKey: 'sendByEmail',
     header: ({ column }) => (
       <div className="flex items-center justify-center">
         <DataTableColumnHeader column={column} title="Enviar no Email" />
       </div>
     ),
     cell: ({ row }: { row: Row<Task> }) => (
-      <div className="w-auto flex items-center justify-center">{row.getValue('SendByEmail') ? <Check className='size-4' /> : <X className='size-4' />}</div>
+      <div className="w-auto flex items-center justify-center">{row.getValue('sendByEmail') ? <Check className='size-4' /> : <X className='size-4' />}</div>
     ),
     filterFn: (row: Row<Task>, id: string, value: unknown[]): boolean => {
       return value.includes(row.getValue(id));
