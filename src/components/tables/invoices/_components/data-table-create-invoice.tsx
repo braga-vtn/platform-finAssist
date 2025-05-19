@@ -331,7 +331,7 @@ function ClientSelect({ clients, value, disabled, onSetValue }: ClientSelectProp
             role="combobox"
             disabled={disabled}
             aria-expanded={open}
-            className="w-[300px] justify-between hover:bg-neutral-100 border-neutral-300 dark:hover:bg-neutral-900 dark:border-neutral-700"
+            className="w-auto justify-between hover:bg-neutral-100 border-neutral-300 dark:hover:bg-neutral-900 dark:border-neutral-700"
           >
             {value ? (
               <span className="flex items-center gap-2">
@@ -344,7 +344,7 @@ function ClientSelect({ clients, value, disabled, onSetValue }: ClientSelectProp
             <ChevronsUpDown className="opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 p-0">
+        <PopoverContent className="w-auto p-0">
           <Command>
             <CommandInput placeholder="Procurar..." className="h-9" />
             <CommandList>
@@ -360,7 +360,7 @@ function ClientSelect({ clients, value, disabled, onSetValue }: ClientSelectProp
                       setOpen(false);
                     }}
                   >
-                    <div className='flex flex-row gap-1 items-center'>
+                    <div className='flex flex-row gap-1 items-center w-auto'>
                       <Badge variant='style'>{client.identifier}</Badge>
                       <p>{client.name}</p>
                     </div>
@@ -393,43 +393,43 @@ function CardClient({ disabled, client }: CardClientProps) {
       <div className='flex flex-row items-center gap-2 w-full'>
         <div className="grid w-1/4 items-center gap-1.5">
           <Label htmlFor="name">Nome do cliente</Label>
-          <Input disabled={disabled} id="name" value={client.name} onChange={() => null} />
+          <Input disabled={disabled} id="name" value={client.name} readOnly />
         </div>
         <div className="grid w-1/4 items-center gap-1.5">
           <Label htmlFor="register">CPF/CNPJ</Label>
-          <Input disabled={disabled} id="register" value={client.register} onChange={() => null} />
+          <Input disabled={disabled} id="register" value={client.register} readOnly />
         </div>
         <div className="grid w-1/2 items-center gap-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input disabled={disabled} id="email" value={client.email} onChange={() => null} />
+          <Input disabled={disabled} id="email" value={client.email} readOnly />
         </div>
       </div>
       <div className='flex flex-row items-center gap-2 w-full'>
         <div className="grid w-1/3 items-center gap-1.5">
           <Label htmlFor="city">Cidade</Label>
-          <Input disabled={disabled} id="city" value={client.city} onChange={() => null} />
+          <Input disabled={disabled} id="city" value={client.city} readOnly />
         </div>
         <div className="grid w-1/3 items-center gap-1.5">
           <Label htmlFor="neighborhood">Bairro</Label>
-          <Input disabled={disabled} id="neighborhood" value={client.phone} onChange={() => null} />
+          <Input disabled={disabled} id="neighborhood" value={client.neighborhood} readOnly />
         </div>
         <div className="grid w-1/3 items-center gap-1.5">
           <Label htmlFor="zipcode">CEP</Label>
-          <Input disabled={disabled} id="zipcode" value={client.zipcode} onChange={() => null} />
+          <Input disabled={disabled} id="zipcode" value={client.zipcode} readOnly />
         </div>
       </div>
       <div className='flex flex-row items-center gap-2 w-full'>
         <div className="grid w-1/2 items-center gap-1.5">
-          <Label htmlFor="address">Complemento</Label>
-          <Input disabled={disabled} id="address" value={client.address} onChange={() => null} />
+          <Label htmlFor="address">Endereço Completo</Label>
+          <Input disabled={disabled} id="address" value={client.address} readOnly />
         </div>
         <div className="grid w-1/4 items-center gap-1.5">
           <Label htmlFor="phone">Celular</Label>
-          <Input disabled={disabled} id="phone" value={client.phone} onChange={() => null} />
+          <Input disabled={disabled} id="phone" value={client.phone} readOnly />
         </div>
         <div className="grid w-1/4 items-center gap-1.5">
           <Label htmlFor="uf">UF</Label>
-          <Input disabled={disabled} id="uf" value={client.uf} onChange={() => null} />
+          <Input disabled={disabled} id="uf" value={client.uf} readOnly />
         </div>
       </div>
     </div>

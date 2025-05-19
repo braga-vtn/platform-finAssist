@@ -8,7 +8,7 @@ export type Client = {
   uf: string;
   zipcode: string;
   neighborhood: string;
-  address?: string | undefined;
+  address: string;
   value: number;
   email?: string | undefined;
   phone?: string | undefined;
@@ -32,7 +32,7 @@ export type Client2 = {
   uf: UF;
   zipcode: string;
   neighborhood: string;
-  address?: string | undefined;
+  address: string;
   value: number;
   email?: string | undefined;
   phone?: string | undefined;

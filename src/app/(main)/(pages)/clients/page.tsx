@@ -58,11 +58,8 @@ export default function Page() {
       if (!uptClient) {
         throw new Error();
       }
-    } catch {
-      toast('Erro Inesperado', { description: 'Não foi possível atualizar o cliente, tente novamente mais tarde!' });
-    } finally {
-      const clientIndex = clients.findIndex(client => client.identifier === item.identifier);
 
+      const clientIndex = clients.findIndex(client => client.identifier === item.identifier);
       if (clientIndex !== -1) {
         const updatedValues = [...clients];
         updatedValues[clientIndex] = {
@@ -75,6 +72,8 @@ export default function Page() {
         setClients(updatedValues);
         toast('Cliente Atualizado', { description: 'O cliente foi atualizado com sucesso!' });
       }
+    } catch {
+      toast('Erro Inesperado', { description: 'Não foi possível atualizar o cliente, tente novamente mais tarde!' });
     }
   };
 

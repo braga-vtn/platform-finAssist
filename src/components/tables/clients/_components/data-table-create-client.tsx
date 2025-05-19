@@ -40,7 +40,7 @@ const formSchema = z.object({
   uf: z.enum(states, { message: "" }),
   zipcode: z.string().min(1, { message: "" }),
   neighborhood: z.string().min(1, { message: "" }),
-  address: z.string().optional(),
+  address: z.string(),
   dueAt: z.string(),
   dueLimitAt: z.string().optional(),
   value: z.string(),

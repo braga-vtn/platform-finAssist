@@ -218,7 +218,7 @@ export const ProfileTabs = () => {
         </div>
         <div className="flex flex-row w-full gap-2">
           <div className="grid w-3/4 items-center gap-1.5">
-            <Label htmlFor="address">Endereço</Label>
+            <Label htmlFor="address">Endereço Completo</Label>
             <Input value={address} onChange={(e) => setAddress(e.target.value)} type="text" id="address" />
           </div>
           <div className="grid w-1/4 items-center gap-1.5">

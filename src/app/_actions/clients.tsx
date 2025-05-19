@@ -131,14 +131,19 @@ export const updateClient = async (item: Client, userId: string) => {
         ? new Date(item.dueAt).toISOString()
         : new Date().toISOString();
 
+    const dueLimitAtISO =
+      item.dueLimitAt && !isNaN(new Date(item.dueLimitAt).getTime())
+        ? new Date(item.dueLimitAt).toISOString()
+        : null;
+
     await client.clients.updateMany({
       where: { identifier: item.identifier, userId },
       data: {
         ...item,
-        address: item.address ?? '',
         email: item.email ?? '',
         phone: item.phone ?? '',
         dueAt: dueAtISO,
+        dueLimitAt: dueLimitAtISO,
       },
     });
 

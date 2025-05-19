@@ -143,7 +143,6 @@ const FormData = ({ form, team, edition = false }: { form: any, team: Team[], ed
             control={form.control}
             name="address"
             label="Complemento"
-            isOptional
           >
             <Input className="w-full" />
           </FormFildItem>

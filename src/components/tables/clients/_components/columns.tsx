@@ -15,7 +15,7 @@ export const taskSchema = z.object({
   identifier: z.string(),
   name: z.string(),
   register: z.string(),
-  address: z.string().optional(),
+  address: z.string(),
   value: z.number(),
   email: z.string().optional(),
   phone: z.string().optional(),

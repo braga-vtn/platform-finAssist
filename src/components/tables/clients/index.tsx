@@ -11,7 +11,7 @@ type ItemProps = {
   identifier: string;
   name: string;
   register: string;
-  address: string | undefined;
+  address: string;
   value: number;
   email: string | undefined;
   phone: string | undefined;
