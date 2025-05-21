@@ -40,7 +40,7 @@ const formSchema = z.object({
   uf: z.enum(states, { message: "" }),
   zipcode: z.string().min(1, { message: "" }),
   neighborhood: z.string().min(1, { message: "" }),
-  address: z.string(),
+  address: z.string().min(1, { message: "" }),
   dueAt: z.string(),
   dueLimitAt: z.string().optional(),
   value: z.string(),
@@ -86,7 +86,7 @@ export function DataTableCreateClient({
   function onSubmit() {
     const values = form.getValues();
 
-    if (!values.name || !values.register || !values.identifier) {
+    if (!values.name || !values.register || !values.identifier || !values.address) {
       toast('Formulário Incompleto', { description: 'Você não preencheu todos os campos obrigatórios do formulário!' });
       return;
     }
