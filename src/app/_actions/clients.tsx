@@ -120,8 +120,7 @@ export const createClient = async (item: Client, userId: string) => {
     });
 
     return { ...newClient, uf: newClient.uf as UF, dueLimitAt: newClient.dueAt.toDateString(), dueAt: newClient.dueAt.toDateString(), createdAt: newClient.createdAt.toDateString() };
-  } catch (error) {
-    console.log(error);
+  } catch {
     return null;
   }
 };
