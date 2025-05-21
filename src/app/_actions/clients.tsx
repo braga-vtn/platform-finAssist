@@ -90,6 +90,7 @@ export const createClient = async (item: Client, userId: string) => {
       data: {
         ...item,
         userId,
+        dueLimitAt: item.dueLimitAt ? item.dueLimitAt : null,
         address: item.address ?? '',
         email: item.email ?? '',
         phone: item.phone ?? ''
@@ -119,7 +120,8 @@ export const createClient = async (item: Client, userId: string) => {
     });
 
     return { ...newClient, uf: newClient.uf as UF, dueLimitAt: newClient.dueAt.toDateString(), dueAt: newClient.dueAt.toDateString(), createdAt: newClient.createdAt.toDateString() };
-  } catch {
+  } catch (error) {
+    console.log(error);
     return null;
   }
 };
