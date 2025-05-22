@@ -386,7 +386,7 @@ const FormBilling = ({ form }: { form: any }) => {
           label="Observação"
           isOptional
         >
-          <Textarea className="max-h-26" disabled={!sendBilling} placeholder="Escreva a observação aqui." />
+          <Textarea className="max-h-26" maxLength={75} disabled={!sendBilling} placeholder="Escreva a observação aqui." />
         </FormFildItem>
       </div>
     </div>
